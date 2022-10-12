@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "timr-Rnfb9",
+    "slug": "timr-Rnfb9",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./expo-images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./expo-images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./expo-images/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.joeypang.timrRnfb9"
+    },
+    "web": {
+      "favicon": "./expo-images/favicon.png"
+    }
+  }
+}
