@@ -29,6 +29,8 @@ const LoginPage = () => {
   //   return unsubscribe;
   // }, []);
 
+
+
   const onFooterLinkPress = () => {
     navigation.navigate("Register");
   };

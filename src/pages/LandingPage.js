@@ -1,3 +1,4 @@
+import * as Google from 'expo-auth-session/providers/google';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -10,24 +11,47 @@ import {
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { auth, db } from "../../config";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+import * as WebBrowser from 'expo-web-browser';
+import { ResponseType } from 'expo-auth-session';
+import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const LandingPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignedIn, setIsSignedIn] = useState(false);
 
+  const [accessToken, setAccessToken] = React.useState();
+  const [userInfo, setUserInfo] = React.useState();
+  const [message, setMessage] = React.useState();
+
   const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       navigation.navigate("Dashboard");
-  //     }
-  //   });
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
+    {
+      clientId: '675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com',
+    },
+  );
 
-  //   return unsubscribe;
-  // }, []);
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      const auth = getAuth();
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential)
+        .then((userCredential) => {
+          setIsSignedIn(true);
+          navigation.navigate("Dashboard");
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+  }, [response]);
+
 
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
@@ -54,7 +78,7 @@ const LandingPage = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={onLoginPress} style={styles.button}>
+        <TouchableOpacity disabled={!request} onPress={() => {promptAsync();}} style={styles.button}>
           <Image
             source={require("../assets/images/google-login.png")}
             style={styles.imageGoogle}
