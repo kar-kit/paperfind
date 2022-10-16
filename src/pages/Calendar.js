@@ -138,7 +138,7 @@ const Calendar = ({ navigation }) => {
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />
-          <TouchableOpacity style={styles.button} onPress={addToDo}>
+          <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Add</Text>
           </TouchableOpacity>
         </View>

@@ -1,4 +1,4 @@
-import * as Google from 'expo-auth-session/providers/google';
+import * as Google from "expo-auth-session/providers/google";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -12,31 +12,29 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { auth, db } from "../../config";
 
-import * as WebBrowser from 'expo-web-browser';
-import { ResponseType } from 'expo-auth-session';
-import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import * as WebBrowser from "expo-web-browser";
+import { ResponseType } from "expo-auth-session";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LandingPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isSignedIn, setIsSignedIn] = useState(false);
-  
   const [accessToken, setAccessToken] = useState();
-
 
   const navigation = useNavigation();
 
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
-    {
-      clientId: '675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com',
-    },
-  );
-
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId:
+      "675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com",
+  });
 
   useEffect(() => {
-    if (response?.type === 'success') {
+    if (response?.type === "success") {
       const { id_token } = response.params;
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
@@ -52,39 +50,30 @@ const LandingPage = () => {
     }
   }, [response]);
 
-
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
 
   async function fetchUserInfo(token) {
-    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-    });
-  
+    const response = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     return await response.json();
   }
 
-  async function getData () {
+  async function getData() {
     const user = await fetchUserInfo(accessToken);
-    console.log(user)
+    console.log(user);
   }
-
-  const onLoginPress = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setIsSignedIn(true);
-        navigation.navigate("Dashboard");
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding ">
@@ -96,7 +85,13 @@ const LandingPage = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity disabled={!request} onPress={() => {promptAsync();}} style={styles.button}>
+        <TouchableOpacity
+          disabled={!request}
+          onPress={() => {
+            promptAsync();
+          }}
+          style={styles.button}
+        >
           <Image
             source={require("../assets/images/google-login.png")}
             style={styles.imageGoogle}

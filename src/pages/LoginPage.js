@@ -19,18 +19,6 @@ const LoginPage = () => {
 
   const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       navigation.navigate("Dashboard");
-  //     }
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-
-
-
   const onFooterLinkPress = () => {
     navigation.navigate("Register");
   };
