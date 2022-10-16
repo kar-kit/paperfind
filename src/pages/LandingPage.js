@@ -22,10 +22,9 @@ const LandingPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  
+  const [accessToken, setAccessToken] = useState();
 
-  const [accessToken, setAccessToken] = React.useState();
-  const [userInfo, setUserInfo] = React.useState();
-  const [message, setMessage] = React.useState();
 
   const navigation = useNavigation();
 
@@ -43,6 +42,7 @@ const LandingPage = () => {
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential)
         .then((userCredential) => {
+          getData();
           setIsSignedIn(true);
           navigation.navigate("Dashboard");
         })
@@ -56,6 +56,24 @@ const LandingPage = () => {
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
+
+  async function fetchUserInfo(token) {
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+  
+    return await response.json();
+  }
+
+  async function getData () {
+    const user = await fetchUserInfo(accessToken);
+    console.log(user)
+  }
 
   const onLoginPress = () => {
     signInWithEmailAndPassword(auth, email, password)

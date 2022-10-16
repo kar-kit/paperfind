@@ -10,6 +10,7 @@ import DrawerNavBar from "./src/components/DrawerNavBar";
 
 LogBox.ignoreLogs([
   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
+  "Linking requires a build-time setting `scheme` in the project's Expo config (app.config.js or app.json) for production apps, if it's left blank, your app may crash. The scheme does not apply to development in the Expo client but you should add it as soon as you start working with Linking to avoid creating a broken build. Learn more: https://docs.expo.dev/guides/linking/"
 ]);
 
 export default function App() {
@@ -18,13 +19,6 @@ export default function App() {
     "Inter-SemiBold": require("./src/assets/fonts/Inter-SemiBold.otf"),
     "Inter-Black": require("./src/assets/fonts/Inter-Black.otf"),
   });
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
-    {
-      clientId: '675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com',
-    },
-  );
-
 
 
   return (
