@@ -9,33 +9,27 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { db, auth } from "../../config";
+import { auth, db } from "../../../config";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
-const RegisterPage = () => {
-  const [fullName, setFullName] = useState("");
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const navigation = useNavigation();
 
   const onFooterLinkPress = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Register");
   };
   const onBackArrowPress = () => {
     navigation.navigate("Landing");
   };
 
-  const onRegisterPress = () => {
-    if (password !== confirmPassword) {
-      alert("Passwords don't match.");
-      return;
-    }
-    createUserWithEmailAndPassword(auth, email, password)
+  const onLoginPress = () => {
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
+        setIsSignedIn(true);
         navigation.navigate("Dashboard");
       })
       .catch((error) => {
@@ -47,27 +41,20 @@ const RegisterPage = () => {
     <View style={styles.containerPage}>
       <TouchableOpacity onPress={onBackArrowPress}>
         <Image
-          source={require("../assets/images/back-arrrow.png")}
+          source={require("../../assets/images/back-arrrow.png")}
           style={styles.imageArrow}
         />
       </TouchableOpacity>
+
       <KeyboardAvoidingView style={styles.container} behavior="padding ">
         <View style={styles.imagecontainer}>
           <Image
-            source={require("../assets/images/pf-logo-text.png")}
+            source={require("../../assets/images/pf-logo-text.png")}
             style={styles.image}
           />
         </View>
 
         <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Full Name"
-            value={fullName}
-            onChangeText={(text) => setFullName(text)}
-            style={styles.input}
-            autoCapitalize="none"
-          ></TextInput>
-
           <TextInput
             placeholder="Email"
             value={email}
@@ -81,30 +68,21 @@ const RegisterPage = () => {
             value={password}
             onChangeText={(text) => setPassword(text)}
             style={styles.input}
-            secureTextEntry
             autoCapitalize="none"
-          ></TextInput>
-
-          <TextInput
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChangeText={(text) => setConfirmPassword(text)}
-            style={styles.input}
             secureTextEntry
-            autoCapitalize="none"
           ></TextInput>
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onRegisterPress} style={styles.button}>
-            <Text style={styles.buttonText}>Register</Text>
+          <TouchableOpacity onPress={onLoginPress} style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={onFooterLinkPress}
-            style={[styles.button, styles.buttonOutline]}
+            style={[styles.buttonOutline]}
           >
-            <Text style={styles.buttonOutlineText}>Already a User?</Text>
+            <Text style={styles.buttonOutlineText}>Register</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -112,19 +90,19 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
 
 const styles = StyleSheet.create({
-  containerPage: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  containerPage: {
+    flex: 1,
+  },
   imagecontainer: {
-    marginTop: -70,
+    marginTop: -150,
   },
   image: {
     height: 205,
@@ -148,7 +126,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "white",
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     marginTop: 5,
   },

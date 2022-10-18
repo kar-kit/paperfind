@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { auth, db } from "../../config";
 
 import * as WebBrowser from "expo-web-browser";
 import { ResponseType } from "expo-auth-session";
@@ -79,7 +78,7 @@ const LandingPage = () => {
     <KeyboardAvoidingView style={styles.container} behavior="padding ">
       <View style={styles.imagecontainer}>
         <Image
-          source={require("../assets/images/pf-logo-text.png")}
+          source={require("../../assets/images/pf-logo-text.png")}
           style={styles.image}
         />
       </View>
@@ -93,7 +92,7 @@ const LandingPage = () => {
           style={styles.button}
         >
           <Image
-            source={require("../assets/images/google-login.png")}
+            source={require("../../assets/images/google-login.png")}
             style={styles.imageGoogle}
           />
         </TouchableOpacity>
