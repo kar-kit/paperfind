@@ -16,11 +16,15 @@ const Profile = ({ navigation }) => {
   const user = auth.currentUser;
   const email = user.email;
 
+  const onBackArrowPress = () => {
+    navigation.navigate("Dashboard");
+  };
+
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        navigation.navigate("Login");
+        navigation.navigate("Landing");
       })
       .catch((error) => {
         // An error happened.
@@ -30,11 +34,11 @@ const Profile = ({ navigation }) => {
 
   return (
     <View style={styles.pageBorder}>
-      <TouchableOpacity
-        style={styles.hamMenu}
-        onPress={() => navigation.openDrawer()}
-      >
-        <Image source={require("../assets/images/ham-menu.png")} />
+      <TouchableOpacity onPress={onBackArrowPress}>
+        <Image
+          source={require("../assets/images/back-arrrow.png")}
+          style={styles.imageArrow}
+        />
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
@@ -43,7 +47,7 @@ const Profile = ({ navigation }) => {
         <View style={styles.buttonContainer}>
           <View style={styles.button}>
             <TouchableOpacity onPress={alert(email)}>
-              <Text style={styles.buttonText}>View Email</Text>
+              <Text style={styles.buttonText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>
 
@@ -76,6 +80,13 @@ const styles = StyleSheet.create({
   pageBorder: {
     flex: 1,
     marginTop: 35,
+  },
+  imageArrow: {
+    height: 30,
+    width: 30,
+    resizeMode: "contain",
+    marginTop: 40,
+    marginLeft: 10,
   },
   hamMenu: {
     marginLeft: 20,

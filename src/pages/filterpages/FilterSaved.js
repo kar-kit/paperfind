@@ -35,9 +35,39 @@ function FilterSaved({ navigation }) {
         <View style={styles.resultContiner} />
 
         <TouchableOpacity style={styles.buttonSearch}>
-          <View style={styles.textBox}>
-            <Text style={styles.buttonText}>Search Papers</Text>
-          </View>
+          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonSearch}>
+          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonSearch}>
+          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonSearch}>
+          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonSearch}>
+          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
           <Image
             style={styles.searchImage}
             source={require("../../assets/images/saved-icon.png")}
@@ -71,7 +101,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: "Inter-Black",
-    fontSize: 25,
+    fontSize: 30,
     padding: 20,
   },
   headerBorderContainer: {
@@ -84,31 +114,37 @@ const styles = StyleSheet.create({
   resultContiner: {
     marginTop: 20,
   },
-  textBox: {
-    marginTop: 20,
-  },
   buttonText: {
     color: "black",
-    fontWeight: "700",
-    fontSize: 18,
+    fontWeight: "600",
+    fontSize: 22,
     flexDirection: "row",
     justifyContent: 'flex-start',
     padding: 10,
   },
   searchImage: {
-    marginTop: 5,
-    marginLeft: 10,
-    width: 30,
-    height: 30,
+    marginTop: 4,
+    marginLeft: 30,
+    width: 40,
+    height: 40,
   },
   buttonSearch: {
     backgroundColor: "white",
     width: "90%",
     padding: 10,
     borderRadius: 10,
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: 'flex-start',
+  },
+  buttonSearchContainer: {
+    backgroundColor: "white",
+    width: "90%",
+    padding: 10,
+    borderRadius: 10,
     marginTop: 5,
     flexDirection: "row",
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
   },
 
   imagecontainer: {

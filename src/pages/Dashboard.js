@@ -45,6 +45,9 @@ function Dashboard({ navigation }) {
   //   console.log(user)
   // }
 
+  const onProfile = () => {
+    navigation.navigate("Profile");
+  };
 
   const onFilterSaved = () => {
     navigation.navigate("Saved");
@@ -56,7 +59,7 @@ function Dashboard({ navigation }) {
     <View style={styles.containerPage}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Good Morning User 1</Text>
-        <TouchableOpacity style={styles.profileIcon}>
+        <TouchableOpacity style={styles.profileIcon} onPress={onProfile}>
           <Image source={require("../assets/images/profile-icon.png")} />
         </TouchableOpacity>
       </View>
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "Inter-Black",
     fontSize: 25,
-    marginRight: '20%',
+    marginRight: '18%',
   },
   buttonText: {
     color: "black",
