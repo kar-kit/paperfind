@@ -5,14 +5,13 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Anticons from "react-native-vector-icons/AntDesign";
 import Maticons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import LandingPage from "../pages/LandingPage";
-import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
-import Dashboard from "../pages/Dashboard";
-import Todos from "../pages/Todolist";
-import Calendarpage from "../pages/Calendar";
+import LandingPage from "../pages/logsys/LandingPage";
+import LoginPage from "../pages/logsys/LoginPage";
+import RegisterPage from "../pages/logsys/RegisterPage";
+import Dashboard from '../pages/Dashboard';
 import Profile from "../pages/Profile";
-import Settings from "../pages/Settings";
+
+import FilterSaved from '../pages/filterpages/FilterSaved';
 
 import CustomDrawerContent from "./DrawerContent";
 
@@ -76,7 +75,7 @@ function DrawerNavBar() {
       />
       <Drawer.Screen
         name="Dashboard"
-        component={Todos}
+        component={Dashboard}
         drawerContent={(props) => <TodoScreen {...props} extraData={user} />}
         options={{
           drawerActiveBackgroundColor: "#BEE8FF",
@@ -89,15 +88,13 @@ function DrawerNavBar() {
         }}
       />
       <Drawer.Screen
-        name="Calendar"
-        component={Calendarpage}
+        name="Saved"
+        component={FilterSaved}
         options={{
           headerShown: false,
-          drawerActiveBackgroundColor: "#E3C8FF",
-          drawerActiveTintColor: "#FFF",
-          drawerIcon: (color) => (
-            <Anticons name="calendar" size={22} color={color} />
-          ),
+          gestureEnabled: false,
+          swipeEnabled: false,
+          drawerItemStyle: { display: "none" },
         }}
       />
     </Drawer.Navigator>

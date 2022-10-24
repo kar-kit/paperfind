@@ -18,7 +18,7 @@ import {
 import { async } from "@firebase/util";
 import { SearchBar } from "react-native-screens";
 
-function Dashboard() {
+function Dashboard({ navigation }) {
   const [accessToken, setAccessToken] = React.useState();
   const [userInfo, setUserInfo] = React.useState();
   const [message, setMessage] = React.useState();
@@ -47,7 +47,7 @@ function Dashboard() {
 
 
   const onFilterSaved = () => {
-    navigation.navigate("Register");
+    navigation.navigate("Saved");
   };
 
 
@@ -74,7 +74,7 @@ function Dashboard() {
         </TouchableOpacity>
 
         <View style={styles.filterContainer1}>
-          <TouchableOpacity style={styles.filterBox1}>
+          <TouchableOpacity style={styles.filterBox1} onPress={onFilterSaved}>
             <Image
               style={styles.filterBoxImage}
               source={require("../assets/images/savedFB.png")}
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: 'flex-end',
+    marginTop: 20,
   },
   profileIcon: {
     marginTop: -10,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "Inter-Black",
     fontSize: 25,
-    marginRight: 140,
+    marginRight: '20%',
   },
   buttonText: {
     color: "black",

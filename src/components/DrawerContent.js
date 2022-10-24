@@ -38,14 +38,6 @@ function CustomDrawerContent(props) {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        <Image
-          source={require("../assets/images/timr-text.png")}
-          style={styles.textimage}
-        />
-        <Image
-          source={require("../assets/images/timr-logo.png")}
-          style={styles.texticon}
-        />
       </View>
 
       <DrawerContentScrollView {...props} style={{ marginTop: -25 }}>
