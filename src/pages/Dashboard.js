@@ -19,8 +19,10 @@ function Dashboard({ navigation }) {
   return (
     <View style={styles.containerPage}>
       <View style={styles.header}>
+
         <Text style={styles.headerText}>Good Morning</Text>
         <TouchableOpacity style={styles.profileIcon}>
+        
           <Image source={require("../assets/images/profile-icon.png")} />
         </TouchableOpacity>
       </View>
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "Inter-Black",
     fontSize: 25,
-    marginRight: '20%',
+    marginRight: '18%',
   },
   buttonText: {
     color: "black",
