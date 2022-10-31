@@ -1,13 +1,15 @@
+//Global imports
 import "react-native-gesture-handler";
 import * as React from "react";
+
+//Package imports
+import { getAuth, signOut } from "firebase/auth";
+import { useNavigation } from "@react-navigation/core";
 import {
-  createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
-  DrawerItem,
 } from "@react-navigation/drawer";
 import {
-  Button,
   Text,
   View,
   StyleSheet,
@@ -15,14 +17,14 @@ import {
   Image,
 } from "react-native";
 
-import { getAuth, signOut } from "firebase/auth";
-import { useNavigation } from "@react-navigation/core";
 
 function CustomDrawerContent(props) {
-  const navigation = useNavigation();
 
+  //Package initilisation
+  const navigation = useNavigation();
   const auth = getAuth();
 
+  //Sign out function in sidebar
   const handleLogout = () => {
     signOut(auth)
       .then(() => {

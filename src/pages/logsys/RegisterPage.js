@@ -1,3 +1,7 @@
+//Package Imports
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/core";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,11 +11,9 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { db, auth } from "../../../config";
+
+//User imports
+import { auth } from "../../../config";
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState("");
