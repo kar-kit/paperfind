@@ -13,7 +13,9 @@ import LoginPage from "../pages/logsys/LoginPage";
 import RegisterPage from "../pages/logsys/RegisterPage";
 import Dashboard from '../pages/Dashboard';
 import Profile from "../pages/Profile";
+
 import FilterSaved from '../pages/filterpages/FilterSaved';
+import ChemSaved from '../pages/filterpages/ChemSaved';
 
 
 
@@ -92,6 +94,16 @@ function DrawerNavBar() {
       <Drawer.Screen
         name="Saved"
         component={FilterSaved}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+          swipeEnabled: false,
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="Chemistry"
+        component={ChemSaved}
         options={{
           headerShown: false,
           gestureEnabled: false,

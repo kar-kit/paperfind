@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import * as OpenAnything from 'react-native-openanything'
+//Package imports
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,107 +7,104 @@ import {
   StyleSheet,
   Button,
   Image,
+  SafeAreaView,
+  FlatList
 } from "react-native";
 
-
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-
-
-function Dashboard({ navigation }) {
+import { getStorage, ref, listAll, getMetadata } from "firebase/storage";
 
 
-  const onFilterSaved = () => {
-    navigation.navigate("Saved");
+function ChemSaved({ navigation }) {
+  const [listName, setListName] = useState()
+  const [metadata, setMetadata] = useState()
+
+  useEffect(() => {
+    listAllFunc()
+    console.log(listName)
+  }, []);
+
+
+  const onBackArrowPress = () => {
+    navigation.navigate("Dashboard");
   };
-
-
-  const onFilterChem = () => {
-    navigation.navigate("Chemistry");
-  };
-
 
 
   const storage = getStorage();
-  const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
 
-  const getPaper = () => {
-    getDownloadURL(paperRef)
-      .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-        // console.log(url)
-        OpenAnything.Pdf(url)
-      })
-      .catch((error) => {
-        // Handle any errors
+  // Create a reference under which you want to list
+  const listRef = ref(storage, 'chemistry');
+
+  const listAllFunc = () => {
+    listAll(listRef)
+      .then((res) => {
+        res.items.forEach((itemRef) => {
+          getMetadata(itemRef)
+            .then((metadata) => {
+              setListName(metadata.name)
+              setMetadata(metadata)
+            })
+        });
+      }).catch((error) => {
+        // Uh-oh, an error occurred!
       });
   }
+
+  const Item = ({ metadata }) => (
+    <TouchableOpacity style={styles.buttonSearch}>
+      <Text style={styles.buttonText}>{listName}</Text>
+      <Image
+        style={styles.searchImage}
+        source={require("../../assets/images/saved-icon.png")}
+      />
+    </TouchableOpacity>
+  );
+
+  const renderItem = ({ item }) => (
+    <Item title={item.title} />
+  );
+
 
 
   return (
     <View style={styles.containerPage}>
-      <View style={styles.header}>
 
-        <Text style={styles.headerText}>Good Morning</Text>
-        <TouchableOpacity style={styles.profileIcon}>
-
-          <Image source={require("../assets/images/profile-icon.png")} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={onBackArrowPress}>
+        <Image
+          source={require("../../assets/images/back-arrrow.png")}
+          style={styles.imageArrow}
+        />
+      </TouchableOpacity>
 
       <View style={styles.container}>
+
+        <View style={styles.headerBorderContainer}>
+          <Text style={styles.headerText}>Saved Chem Papers</Text>
+        </View>
+
+
+        <View style={styles.resultContiner} />
+
         <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>Search Papers</Text>
+          <Text style={styles.buttonText}>{listName}</Text>
           <Image
             style={styles.searchImage}
-            source={require("../assets/images/search.png")}
+            source={require("../../assets/images/saved-icon.png")}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={getPaper}>
-          <Text style={styles.buttonText}>Last Opened</Text>
-        </TouchableOpacity>
 
-        <View style={styles.filterContainer1}>
-          <TouchableOpacity style={styles.filterBox1} onPress={onFilterSaved}>
-            <Image
-              style={styles.filterBoxImage}
-              source={require("../assets/images/savedFB.png")}
-            />
-            <Text style={styles.filterButtonText}>Saved</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.filterBox2}>
-            <Image
-              style={styles.filterBoxImage}
-              source={require("../assets/images/filterBio.png")}
-            />
-            <Text style={styles.filterButtonText}>Biology</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.filterContainer2}>
-          <TouchableOpacity style={styles.filterBox3} onPress={onFilterChem}>
-            <Image
-              style={styles.filterBoxImage}
-              source={require("../assets/images/filterChem.png")}
-            />
-            <Text style={styles.filterButtonText}>Chemistry</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.filterBox4}>
-            <Image
-              style={styles.filterBoxImage}
-              source={require("../assets/images/filterPhy.png")}
-            />
-            <Text style={styles.filterButtonText}>Physics</Text>
-          </TouchableOpacity>
-        </View>
+        <SafeAreaView>
+          <FlatList
+            data={metadata}
+            renderItem={renderItem}
+          />
+        </SafeAreaView>
 
       </View>
     </View>
   );
 }
 
-export default Dashboard;
+export default ChemSaved;
 
 const styles = StyleSheet.create({
   containerPage: {
@@ -115,15 +112,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   container: {
-    marginTop: 20,
     padding: 10,
     flex: 1,
     alignItems: 'center',
   },
   header: {
-    flexDirection: "row",
-    justifyContent: 'flex-end',
-    marginTop: 20,
+    alignContent: 'center',
   },
   profileIcon: {
     marginTop: -10,
@@ -131,28 +125,50 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: "Inter-Black",
-    fontSize: 25,
-    marginRight: '18%',
+    fontSize: 30,
+    padding: 20,
+  },
+  headerBorderContainer: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    width: '90%',
+    borderWidth: 4,
+    borderColor: '#FF7171',
+  },
+  resultContiner: {
+    marginTop: 20,
   },
   buttonText: {
     color: "black",
-    fontWeight: "700",
-    fontSize: 18,
+    fontWeight: "600",
+    fontSize: 22,
     flexDirection: "row",
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    padding: 10,
   },
   searchImage: {
-    marginLeft: 10,
-    width: 30,
-    height: 30,
+    marginTop: 4,
+    marginLeft: 30,
+    width: 40,
+    height: 40,
   },
   buttonSearch: {
     backgroundColor: "white",
     width: "90%",
     padding: 10,
     borderRadius: 10,
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: 'flex-start',
+  },
+  buttonSearchContainer: {
+    backgroundColor: "white",
+    width: "90%",
+    padding: 10,
+    borderRadius: 10,
     marginTop: 5,
     flexDirection: "row",
+    justifyContent: 'flex-start',
   },
 
   imagecontainer: {

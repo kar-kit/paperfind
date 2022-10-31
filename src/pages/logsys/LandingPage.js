@@ -22,6 +22,8 @@ import {
 } from "firebase/auth";
 
 
+
+
 WebBrowser.maybeCompleteAuthSession();
 
 const LandingPage = () => {
@@ -32,6 +34,8 @@ const LandingPage = () => {
   //Initilising navigation routes
   const navigation = useNavigation();
 
+
+
   //Google Api Connection
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
@@ -40,14 +44,13 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      setAccessToken(response.authentication.accessToken);
-      console.log(accessToken)
+      // setAccessToken(response.authentication.accessToken);
+      // console.log(accessToken)
       const { id_token } = response.params;
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential)
         .then((userCredential) => {
-          getData();
           setIsSignedIn(true);
           navigation.navigate("Dashboard");
         })
@@ -61,6 +64,8 @@ const LandingPage = () => {
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
+
+
 
 
   return (
