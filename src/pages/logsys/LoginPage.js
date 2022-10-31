@@ -1,3 +1,8 @@
+//Package imports
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/core";
+import { auth } from "../../../config";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,10 +12,6 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { auth, db } from "../../../config";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +20,7 @@ const LoginPage = () => {
 
   const navigation = useNavigation();
 
-  const onFooterLinkPress = () => {
-    navigation.navigate("Register");
-  };
-  const onBackArrowPress = () => {
-    navigation.navigate("Landing");
-  };
-
+  //Logout function
   const onLoginPress = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -36,6 +31,15 @@ const LoginPage = () => {
         alert(error);
       });
   };
+
+  //OnPress Navigation Functions
+  const onFooterLinkPress = () => {
+    navigation.navigate("Register");
+  };
+  const onBackArrowPress = () => {
+    navigation.navigate("Landing");
+  };
+
 
   return (
     <View style={styles.containerPage}>

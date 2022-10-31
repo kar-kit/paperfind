@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -7,44 +7,8 @@ import {
   Button,
   Image,
 } from "react-native";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithCredential,
-} from "firebase/auth";
-import { async } from "@firebase/util";
-import { SearchBar } from "react-native-screens";
 
 function Dashboard({ navigation }) {
-  const [accessToken, setAccessToken] = React.useState();
-  const [userInfo, setUserInfo] = React.useState();
-  const [message, setMessage] = React.useState();
-
-  // React.useEffect(() => {
-  //   const { authentication: { accessToken } } = response;
-  // }, []);
-
-  // async function fetchUserInfo(token) {
-  //   const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-  //     method: 'GET',
-  //     headers: {
-  //       Accept: 'application/json',
-  //       Authorization: `Bearer ${token}`,
-  //       'Content-Type': 'application/json'
-  //     },
-  //   });
-
-  //   return await response.json();
-  // }
-
-  // async function getData () {
-  //   const user = await fetchUserInfo(accessToken);
-  //   console.log(user)
-  // }
-
 
   const onFilterSaved = () => {
     navigation.navigate("Saved");
@@ -55,7 +19,7 @@ function Dashboard({ navigation }) {
   return (
     <View style={styles.containerPage}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Good Morning User 1</Text>
+        <Text style={styles.headerText}>Good Morning</Text>
         <TouchableOpacity style={styles.profileIcon}>
           <Image source={require("../assets/images/profile-icon.png")} />
         </TouchableOpacity>

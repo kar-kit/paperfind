@@ -1,4 +1,11 @@
+//Global imports
 import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+
+//Package imports
+import React, { useState, useEffect } from "react";
+import { ResponseType } from "expo-auth-session";
+import { useNavigation } from "@react-navigation/core";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -8,25 +15,24 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
-
-import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithCredential,
 } from "firebase/auth";
 
+
 WebBrowser.maybeCompleteAuthSession();
 
 const LandingPage = () => {
+  //Setting variables for frontend
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [accessToken, setAccessToken] = useState();
 
+  //Initilising navigation routes
   const navigation = useNavigation();
 
+  //Google Api Connection
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       "675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com",
@@ -34,6 +40,8 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (response?.type === "success") {
+      setAccessToken(response.authentication.accessToken);
+      console.log(accessToken)
       const { id_token } = response.params;
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
@@ -49,30 +57,11 @@ const LandingPage = () => {
     }
   }, [response]);
 
+  //On Press Navigation
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
 
-  async function fetchUserInfo(token) {
-    const response = await fetch(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    return await response.json();
-  }
-
-  async function getData() {
-    const user = await fetchUserInfo(accessToken);
-    console.log(user);
-  }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding ">

@@ -19,8 +19,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+//Enable authentication for email and google services
 const auth = getAuth(app);
 
+//Enable database requests
 const db = getFirestore(app);
 
 export { auth, db };

@@ -1,19 +1,21 @@
-import "react-native-gesture-handler";
+//Global imports
 import * as React from "react";
+import "react-native-gesture-handler";
+
+//Package imports
 import { createDrawerNavigator } from "@react-navigation/drawer";
-
 import Anticons from "react-native-vector-icons/AntDesign";
-import Maticons from "react-native-vector-icons/MaterialCommunityIcons";
 
+//User Imports
+import CustomDrawerContent from "./DrawerContent";
 import LandingPage from "../pages/logsys/LandingPage";
 import LoginPage from "../pages/logsys/LoginPage";
 import RegisterPage from "../pages/logsys/RegisterPage";
 import Dashboard from '../pages/Dashboard';
 import Profile from "../pages/Profile";
-
 import FilterSaved from '../pages/filterpages/FilterSaved';
 
-import CustomDrawerContent from "./DrawerContent";
+
 
 const Drawer = createDrawerNavigator();
 

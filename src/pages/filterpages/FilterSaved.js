@@ -1,3 +1,4 @@
+//Package imports
 import React from "react";
 import {
   View,
@@ -9,7 +10,6 @@ import {
 } from "react-native";
 
 function FilterSaved({ navigation }) {
-
 
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
