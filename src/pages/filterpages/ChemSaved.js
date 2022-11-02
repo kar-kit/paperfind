@@ -1,3 +1,4 @@
+import * as OpenAnything from 'react-native-openanything'
 //Package imports
 import React, { useState, useEffect } from "react";
 import {
@@ -17,6 +18,7 @@ import { getDownloadURL } from 'firebase/storage';
 
 function ChemSaved({ navigation }) {
   const [itemList, setItemList] = useState([]);
+  const [downloadLink, setDownloadLink] = useState();
   const [metadata, setMetadata] = useState();
 
   useEffect(() => {
@@ -38,18 +40,21 @@ function ChemSaved({ navigation }) {
     listAll(listRef)
       .then((res) => {
         res.items.forEach((item) => {
-          item.getDownloadURL.then((url) => {
-
-            setItemList(arr => [...arr, { title: item.name, link: url }]);
+          getDownloadURL(item).then((url) => {
+            setItemList(arr => [...arr, { 'title': item.name, 'link': url }]);
           })
         });
       }).catch((error) => {
-        // Uh-oh, an error occurred!
+        // Uh-oh, an error occurred!r
       });
   }
 
-  const Item = ({ title }) => (
-    <TouchableOpacity style={styles.buttonSearch}>
+  const openDownloadLink = ({ link }) => {
+    OpenAnything.Pdf(link)
+  }
+
+  const Item = ({ title, link }) => (
+    <TouchableOpacity style={styles.buttonSearch} onPress={() => OpenAnything.Pdf(link)}>
       <Text style={styles.buttonText}>{title}</Text>
       <Image
         style={styles.searchImage}
@@ -59,7 +64,7 @@ function ChemSaved({ navigation }) {
   );
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <Item title={item.title} link={item.link} />
   );
 
 
@@ -83,7 +88,7 @@ function ChemSaved({ navigation }) {
 
         <View style={styles.resultContiner} />
 
-        <TouchableOpacity style={styles.buttonSearch} onPress={console.log(itemList)}>
+        <TouchableOpacity style={styles.buttonSearch}>
           <Text style={styles.buttonText}>Temp</Text>
           <Image
             style={styles.searchImage}
