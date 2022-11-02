@@ -11,16 +11,15 @@ import {
   FlatList
 } from "react-native";
 
-import { getStorage, ref, listAll, getMetadata } from "firebase/storage";
+import { getStorage, ref, listAll, getMetadata, list } from "firebase/storage";
 
 
 function ChemSaved({ navigation }) {
-  const [listName, setListName] = useState()
-  const [metadata, setMetadata] = useState()
+  const [itemList, setItemList] = useState([]);
+  const [metadata, setMetadata] = useState();
 
   useEffect(() => {
     listAllFunc()
-    console.log(listName)
   }, []);
 
 
@@ -37,12 +36,8 @@ function ChemSaved({ navigation }) {
   const listAllFunc = () => {
     listAll(listRef)
       .then((res) => {
-        res.items.forEach((itemRef) => {
-          getMetadata(itemRef)
-            .then((metadata) => {
-              setListName(metadata.name)
-              setMetadata(metadata)
-            })
+        res.items.forEach((item) => {
+          setItemList(arr => [...arr, item.name]);
         });
       }).catch((error) => {
         // Uh-oh, an error occurred!
@@ -51,7 +46,7 @@ function ChemSaved({ navigation }) {
 
   const Item = ({ metadata }) => (
     <TouchableOpacity style={styles.buttonSearch}>
-      <Text style={styles.buttonText}>{listName}</Text>
+      <Text style={styles.buttonText}>{metadata.name}</Text>
       <Image
         style={styles.searchImage}
         source={require("../../assets/images/saved-icon.png")}
@@ -84,8 +79,8 @@ function ChemSaved({ navigation }) {
 
         <View style={styles.resultContiner} />
 
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>{listName}</Text>
+        <TouchableOpacity style={styles.buttonSearch} onPress={console.log(itemList)}>
+          <Text style={styles.buttonText}>Temp</Text>
           <Image
             style={styles.searchImage}
             source={require("../../assets/images/saved-icon.png")}
