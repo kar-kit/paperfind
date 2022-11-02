@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import { getStorage, ref, listAll, getMetadata, list } from "firebase/storage";
+import { getDownloadURL } from 'firebase/storage';
 
 
 function ChemSaved({ navigation }) {
@@ -37,16 +38,19 @@ function ChemSaved({ navigation }) {
     listAll(listRef)
       .then((res) => {
         res.items.forEach((item) => {
-          setItemList(arr => [...arr, item.name]);
+          item.getDownloadURL.then((url) => {
+
+            setItemList(arr => [...arr, { title: item.name, link: url }]);
+          })
         });
       }).catch((error) => {
         // Uh-oh, an error occurred!
       });
   }
 
-  const Item = ({ metadata }) => (
+  const Item = ({ title }) => (
     <TouchableOpacity style={styles.buttonSearch}>
-      <Text style={styles.buttonText}>{metadata.name}</Text>
+      <Text style={styles.buttonText}>{title}</Text>
       <Image
         style={styles.searchImage}
         source={require("../../assets/images/saved-icon.png")}
@@ -89,7 +93,7 @@ function ChemSaved({ navigation }) {
 
         <SafeAreaView>
           <FlatList
-            data={metadata}
+            data={itemList}
             renderItem={renderItem}
           />
         </SafeAreaView>
