@@ -86,22 +86,20 @@ function ChemSaved({ navigation }) {
         </View>
 
 
-        <View style={styles.resultContiner} />
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>Temp</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
         <SafeAreaView>
           <FlatList
             data={itemList}
             renderItem={renderItem}
           />
         </SafeAreaView>
+
+        {/* <TouchableOpacity style={styles.buttonSearch}>
+          <Text style={styles.buttonText}>Temp</Text>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity> */}
 
       </View>
     </View>
@@ -152,18 +150,17 @@ const styles = StyleSheet.create({
   },
   searchImage: {
     marginTop: 4,
-    marginLeft: 30,
+    marginLeft: 140,
     width: 40,
     height: 40,
   },
   buttonSearch: {
     backgroundColor: "white",
-    width: "90%",
-    padding: 10,
-    borderRadius: 10,
     marginTop: 20,
+    borderRadius: 10,
+    minWidth: '90%',
+    padding: 10,
     flexDirection: "row",
-    justifyContent: 'flex-start',
   },
   buttonSearchContainer: {
     backgroundColor: "white",
@@ -176,7 +173,8 @@ const styles = StyleSheet.create({
   },
 
   imagecontainer: {
-    marginTop: -150,
+    marginTop: -140,
+    justifyContent: 'flex-end',
   },
   image: {
     height: 205,

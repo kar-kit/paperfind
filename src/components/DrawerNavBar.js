@@ -14,6 +14,8 @@ import RegisterPage from "../pages/logsys/RegisterPage";
 import Dashboard from '../pages/Dashboard';
 import Profile from "../pages/Profile";
 
+import Search from '../pages/Search';
+
 import FilterSaved from '../pages/filterpages/FilterSaved';
 import ChemSaved from '../pages/filterpages/ChemSaved';
 
@@ -80,6 +82,20 @@ function DrawerNavBar() {
       <Drawer.Screen
         name="Dashboard"
         component={Dashboard}
+        drawerContent={(props) => <TodoScreen {...props} extraData={user} />}
+        options={{
+          drawerActiveBackgroundColor: "#BEE8FF",
+          drawerActiveTintColor: "#FFF",
+          headerShown: false,
+
+          drawerIcon: (color) => (
+            <Anticons name="home" size={22} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Search"
+        component={Search}
         drawerContent={(props) => <TodoScreen {...props} extraData={user} />}
         options={{
           drawerActiveBackgroundColor: "#BEE8FF",
