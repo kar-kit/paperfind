@@ -26,15 +26,11 @@ import {
 
 WebBrowser.maybeCompleteAuthSession();
 
-const LandingPage = () => {
-  //Setting variables for frontend
+//Page Function
+const LandingPage = ({ navigation }) => {
+  //UseState Varibles for subfunctions and return data
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [accessToken, setAccessToken] = useState();
-
-  //Initilising navigation routes
-  const navigation = useNavigation();
-
-
 
   //Google Api Connection
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -42,10 +38,9 @@ const LandingPage = () => {
       "675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com",
   });
 
+
   useEffect(() => {
     if (response?.type === "success") {
-      // setAccessToken(response.authentication.accessToken);
-      // console.log(accessToken)
       const { id_token } = response.params;
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
@@ -60,7 +55,7 @@ const LandingPage = () => {
     }
   }, [response]);
 
-  //On Press Navigation
+  //Navigation Funtion
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };

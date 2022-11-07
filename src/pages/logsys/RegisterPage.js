@@ -15,32 +15,40 @@ import {
 //User imports
 import { auth } from "../../../config";
 
-const RegisterPage = () => {
+//Page Function
+const RegisterPage = ({ navigation }) => {
+  //UseState Varibles for subfunctions and return data
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const navigation = useNavigation();
-
+  //Navigation Functions
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
+
   const onBackArrowPress = () => {
     navigation.navigate("Landing");
   };
 
+
+  //Signup Function
   const onRegisterPress = () => {
     if (password !== confirmPassword) {
+      //Same password check
       alert("Passwords don't match.");
       return;
     }
+    //Writing user data to firebase
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        //After new user created navigate to the dashboard
         const user = userCredential.user;
         navigation.navigate("Dashboard");
       })
       .catch((error) => {
+        //Show any errors in the terminal
         alert(error);
       });
   };

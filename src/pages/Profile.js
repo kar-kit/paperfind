@@ -1,5 +1,6 @@
+//Package Imports
 import React, { useState, useEffect } from "react";
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import {
   View,
   Text,
@@ -11,15 +12,21 @@ import {
   Image,
 } from "react-native";
 
+//User imports
+import { auth } from '../../config';
+
+//Page Function
 const Profile = ({ navigation }) => {
-  const auth = getAuth();
+  //Retrive user email and store in variable
   const user = auth.currentUser;
   const email = user.email;
 
+  //Navigation Functions
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
 
+  //Logout Functions
   const handleLogout = () => {
     signOut(auth)
       .then(() => {

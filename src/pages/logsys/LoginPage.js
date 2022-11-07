@@ -13,24 +13,11 @@ import {
   Image,
 } from "react-native";
 
-const LoginPage = () => {
+const LoginPage = ({ navigation }) => {
+  //useState Varibles for subfunctions and return data
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignedIn, setIsSignedIn] = useState(false);
-
-  const navigation = useNavigation();
-
-  //Logout function
-  const onLoginPress = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setIsSignedIn(true);
-        navigation.navigate("Dashboard");
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
 
   //OnPress Navigation Functions
   const onFooterLinkPress = () => {
@@ -39,6 +26,22 @@ const LoginPage = () => {
   const onBackArrowPress = () => {
     navigation.navigate("Landing");
   };
+
+  //Logout function
+  const onLoginPress = () => {
+    //Check user data with firebase
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        //if data is valid navigate to next page
+        setIsSignedIn(true);
+        navigation.navigate("Dashboard");
+      })
+      .catch((error) => {
+        //Show errors in the terminal
+        alert(error);
+      });
+  };
+
 
 
   return (

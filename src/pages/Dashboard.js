@@ -1,5 +1,9 @@
-import React, { useEffect } from "react";
+//Quick Imports
 import * as OpenAnything from 'react-native-openanything'
+
+//Package Imports
+import React, { useEffect } from "react";
+import { ref, getDownloadURL } from "firebase/storage";
 import {
   View,
   Text,
@@ -9,12 +13,13 @@ import {
   Image,
 } from "react-native";
 
+//User Imports
+import { storage } from '../../config';
 
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-
-
+//Page Function
 function Dashboard({ navigation }) {
 
+  //Navigation Functions
   const onSearch = () => {
     navigation.navigate('Search')
   }
@@ -23,14 +28,12 @@ function Dashboard({ navigation }) {
     navigation.navigate("Saved");
   };
 
-
   const onFilterChem = () => {
     navigation.navigate("Chemistry");
   };
 
 
 
-  const storage = getStorage();
   const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
 
   const getPaper = () => {

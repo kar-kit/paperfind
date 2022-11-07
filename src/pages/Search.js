@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from "react";
+//Global Imports
 import * as OpenAnything from 'react-native-openanything'
+
+//Package Imports
+import React, { useEffect, useState } from "react";
+import { ref, getDownloadURL, listAll, getMetadata, list } from "firebase/storage";
+import { collection, getDocs, Doc } from "firebase/firestore";
 import {
   View,
   Text,
@@ -12,20 +17,22 @@ import {
   FlatList,
 } from "react-native";
 
+//User Imports
+import { storage } from '../../config';
+import { db } from '../../config';
 
-import { getStorage, ref, getDownloadURL, listAll, getMetadata, list } from "firebase/storage";
 
 
 
+//Page Function
 function Search({ navigation }) {
-
+  //UseState Varibles for subfunctions and return data
   const [searchTerms, setSearchTerms] = useState('');
   const [itemList, setItemList] = useState([]);
   const [downloadLink, setDownloadLink] = useState();
   const [metadata, setMetadata] = useState();
 
-
-
+  //Navigation Functions
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
@@ -34,19 +41,13 @@ function Search({ navigation }) {
     navigation.navigate("Saved");
   };
 
-
   const onFilterChem = () => {
     navigation.navigate("Chemistry");
   };
 
 
-
-  const storage = getStorage();
-  const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
-
   // Create a reference under which you want to list
   const listRef = ref(storage, 'chemistry');
-
   const listAllFunc = () => {
     listAll(listRef)
       .then((res) => {
@@ -58,6 +59,13 @@ function Search({ navigation }) {
       }).catch((error) => {
         // Uh-oh, an error occurred!r
       });
+  }
+
+  async function retriveData() {
+    const querySnapshot = await getDocs(collection(db, "papers"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.name);
+    });
   }
 
 
@@ -97,7 +105,7 @@ function Search({ navigation }) {
             autoCapitalize="sentences"
           />
         </View>
-        <TouchableOpacity style={styles.buttonSearch}>
+        <TouchableOpacity style={styles.buttonSearch} onPress={retriveData}>
           <Image
             style={styles.searchImage}
             source={require("../assets/images/search.png")}

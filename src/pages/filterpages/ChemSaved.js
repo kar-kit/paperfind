@@ -1,58 +1,67 @@
+//Global imports
 import * as OpenAnything from 'react-native-openanything'
+
 //Package imports
 import React, { useState, useEffect } from "react";
+import { ref, listAll } from "firebase/storage";
+import { getDownloadURL } from 'firebase/storage';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Image,
   SafeAreaView,
   FlatList
 } from "react-native";
 
-import { getStorage, ref, listAll, getMetadata, list } from "firebase/storage";
-import { getDownloadURL } from 'firebase/storage';
+//User imports
+import { storage } from '../../../config';
 
-
+//Page Function
 function ChemSaved({ navigation }) {
+  //UseState Varibles for subfunctions and return data
   const [itemList, setItemList] = useState([]);
   const [downloadLink, setDownloadLink] = useState();
   const [metadata, setMetadata] = useState();
 
+  //Hook run once when page loads
   useEffect(() => {
     listAllFunc()
   }, []);
 
-
+  //Navigation Functions
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
 
 
-  const storage = getStorage();
-
-  // Create a reference under which you want to list
+  //Storage reference
   const listRef = ref(storage, 'chemistry');
-
+  //Function reading all item data in storage reference
   const listAllFunc = () => {
     listAll(listRef)
       .then((res) => {
         res.items.forEach((item) => {
+          //For each item in storage directory get the name of the item
+          //And the download link and store in useState array
           getDownloadURL(item).then((url) => {
             setItemList(arr => [...arr, { 'title': item.name, 'link': url }]);
           })
         });
       }).catch((error) => {
-        // Uh-oh, an error occurred!r
+        //Show any errors in the terminal
+        console.log(error)
       });
   }
 
-  const openDownloadLink = ({ link }) => {
-    OpenAnything.Pdf(link)
-  }
 
+  //Flatlist render function
+  const renderItem = ({ item }) => (
+    <Item title={item.title} link={item.link} />
+  );
+
+  //FLatlist content
   const Item = ({ title, link }) => (
     <TouchableOpacity style={styles.buttonSearch} onPress={() => OpenAnything.Pdf(link)}>
       <Text style={styles.buttonText}>{title}</Text>
@@ -63,9 +72,6 @@ function ChemSaved({ navigation }) {
     </TouchableOpacity>
   );
 
-  const renderItem = ({ item }) => (
-    <Item title={item.title} link={item.link} />
-  );
 
 
 
@@ -92,14 +98,6 @@ function ChemSaved({ navigation }) {
             renderItem={renderItem}
           />
         </SafeAreaView>
-
-        {/* <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>Temp</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity> */}
 
       </View>
     </View>

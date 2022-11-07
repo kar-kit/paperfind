@@ -29,4 +29,5 @@ const db = getFirestore(app);
 // Initialize Cloud Storage and get a reference to the service
 const storage = getStorage(app);
 
-export { auth, db };
+//Export Initilized Variabes for Page Functions
+export { auth, db, storage };

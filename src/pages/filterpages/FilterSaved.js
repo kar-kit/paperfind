@@ -5,12 +5,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Image,
 } from "react-native";
 
+//Page Function
 function FilterSaved({ navigation }) {
 
+  //Navigation function
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
