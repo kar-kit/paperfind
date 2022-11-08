@@ -4,7 +4,7 @@ import * as OpenAnything from 'react-native-openanything'
 //Package Imports
 import React, { useEffect, useState } from "react";
 import { ref, getDownloadURL, listAll, getMetadata, list } from "firebase/storage";
-import { collection, getDocs, Doc } from "firebase/firestore";
+
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ import {
 import { storage } from '../../config';
 import { db } from '../../config';
 
-
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 
 //Page Function
@@ -46,25 +46,22 @@ function Search({ navigation }) {
   };
 
 
-  // Create a reference under which you want to list
-  const listRef = ref(storage, 'chemistry');
-  const listAllFunc = () => {
-    listAll(listRef)
-      .then((res) => {
-        res.items.forEach((item) => {
-          getDownloadURL(item).then((url) => {
-            setItemList(arr => [...arr, { 'title': item.name, 'link': url }]);
-          })
-        });
-      }).catch((error) => {
-        // Uh-oh, an error occurred!r
-      });
-  }
+
+  const q = query(collection(db, "papers"), where('name', '==', searchTerms));
 
   async function retriveData() {
-    const querySnapshot = await getDocs(collection(db, "papers"));
+
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.name);
+      // doc.data() is never undefined for query doc snapshots
+      const paper = doc.data()
+      if (!itemList.includes(paper.name)) {
+
+        setItemList(arr => [...arr, { 'title': paper.name, 'link': paper.downloadurl }]);
+
+
+        console.log(itemList)
+      }
     });
   }
 
