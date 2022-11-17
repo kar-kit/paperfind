@@ -32,6 +32,11 @@ function Search({ navigation }) {
   const [downloadLink, setDownloadLink] = useState();
   const [metadata, setMetadata] = useState();
 
+  useEffect(() => {
+    retriveData()
+  }, [searchTerms]);
+
+
   //Navigation Functions
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
@@ -47,20 +52,31 @@ function Search({ navigation }) {
 
 
 
-  const q = query(collection(db, "papers"), where('name', '==', searchTerms));
 
   async function retriveData() {
 
+    //removed .where(PARAMS)
+    const q = query(collection(db, "papers"));
+
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
+      let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
       // doc.data() is never undefined for query doc snapshots
       const paper = doc.data()
-      if (!itemList.includes(paper.name)) {
+      console.log(paper.name)
+      if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
+        if (itemList.includes(formattedSearchTerm) === true && formattedSearchTerm.includes('') === false) {
 
-        setItemList(arr => [...arr, { 'title': paper.name, 'link': paper.downloadurl }]);
+          setItemList(arr => [...arr, { 'title': paper.name, 'link': paper.downloadurl }]);
 
+          console.log('ran successfully')
+        } else {
+          console.log('paper already in array')
+        }
+      } else {
+        console.log('search unsuccesfull with ' + formattedSearchTerm)
+        console.log('exected result' + formattedSearchTerm)
 
-        console.log(itemList)
       }
     });
   }
