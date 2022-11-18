@@ -21,7 +21,7 @@ import {
 import { storage } from '../../config';
 import { db } from '../../config';
 
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 
 
 //Page Function
@@ -33,6 +33,7 @@ function Search({ navigation }) {
   const [metadata, setMetadata] = useState();
 
   useEffect(() => {
+    setItemList('')
     retriveData()
   }, [searchTerms]);
 
@@ -51,51 +52,82 @@ function Search({ navigation }) {
   };
 
 
-
-
   async function retriveData() {
+    setItemList('')
+    let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
 
-    //removed .where(PARAMS)
+    // const q = query(collection(db, "papers"), where("name", "==", formattedSearchTerm));
     const q = query(collection(db, "papers"));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
       // doc.data() is never undefined for query doc snapshots
       const paper = doc.data()
-      console.log(paper.name)
       if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
-        if (itemList.includes(formattedSearchTerm) === true && formattedSearchTerm.includes('') === false) {
+        if (itemList.includes(doc.id) === false) {
 
-          setItemList(arr => [...arr, { 'title': paper.name, 'link': paper.downloadurl }]);
-
+          setItemList(arr => [...arr, {
+            'title': paper.displayname,
+            'link': paper.downloadurl,
+            'examboard': paper.examboard,
+            'subject': paper.subject,
+            'id': doc.id
+          }]);
           console.log('ran successfully')
-        } else {
-          console.log('paper already in array')
         }
-      } else {
-        console.log('search unsuccesfull with ' + formattedSearchTerm)
-        console.log('exected result' + formattedSearchTerm)
-
       }
     });
   }
 
 
-  const Item = ({ title, link }) => (
-    <TouchableOpacity style={styles.buttonSearch} onPress={() => OpenAnything.Pdf(link)}>
-      <Text style={styles.buttonText}>{title}</Text>
-      <Image
-        style={styles.searchImage}
-        source={require("../assets/images/saved-icon.png")}
-      />
+  const Item = ({ title, link, examboard, subject, idCred }) => (
+    <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
+      <View style={styles.buttonHeader}>
+        <Text style={styles.buttonText}>{title}</Text>
+
+        <TouchableOpacity onPress={() => favoriteItem(idCred)}>
+          <Image
+            style={styles.searchImage}
+            source={require("../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+      </View>
+      <View>
+        <Text style={styles.buttonText2}>{subject} {examboard}</Text>
+      </View>
     </TouchableOpacity>
   );
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} link={item.link} />
+    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
   );
 
+  async function favoriteItem(idCred) {
+    const itemRef = doc(db, 'papers', idCred)
+    const docSnap = await getDoc(itemRef)
+
+    // await updateDoc(itemRef, {
+    //   favourite: true
+    // });
+
+    if (docSnap.exists()) {
+      if (docSnap.data().favourite === true) {
+        await updateDoc(itemRef, {
+          favourite: false
+        });
+      }
+      else if (docSnap.data().favourite === false) {
+        await updateDoc(itemRef, {
+          favourite: true
+        });
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+
+  }
 
   return (
     <View style={styles.containerPage}>
@@ -118,12 +150,6 @@ function Search({ navigation }) {
             autoCapitalize="sentences"
           />
         </View>
-        <TouchableOpacity style={styles.buttonSearch} onPress={retriveData}>
-          <Image
-            style={styles.searchImage}
-            source={require("../assets/images/search.png")}
-          />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.container}>
@@ -147,8 +173,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
+  buttonHeader: {
+    flexDirection: "row",
+    marginBottom: -10,
+  },
   container: {
     marginTop: 20,
+    marginLeft: -10,
     padding: 10,
     flex: 1,
     alignItems: 'center',
@@ -156,9 +187,10 @@ const styles = StyleSheet.create({
   header: {
     padding: 10,
     // flex: 1,
-    flexDirection: "row",
-    justifyContent: 'center',
-    marginLeft: 50,
+    // flexDirection: "center",
+    // justifyContent: 'center',
+    alignItems: 'center',
+    // marginLeft: 50,
   },
   profileIcon: {
     marginTop: -10,
@@ -189,16 +221,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: 'flex-start'
   },
+  buttonText2: {
+    color: "black",
+    fontWeight: "300",
+    fontSize: 15,
+    flexDirection: "row",
+    justifyContent: 'flex-start'
+  },
   searchImage: {
     width: 30,
     height: 30,
+    marginLeft: 150,
+    alignItems: 'flex-end',
   },
   buttonSearch: {
     backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     marginTop: 5,
-    flexDirection: "row",
+  },
+  buttonItem: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 5,
+    width: 330,
   },
 
   imagecontainer: {
@@ -264,6 +311,13 @@ const styles = StyleSheet.create({
     height: 110,
   },
   filterButtonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 18,
+    flexDirection: "row",
+    justifyContent: 'flex-start'
+  },
+  filterButtonText2: {
     color: "white",
     fontWeight: "700",
     fontSize: 18,

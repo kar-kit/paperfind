@@ -33,48 +33,6 @@ function FilterSaved({ navigation }) {
         </View>
 
 
-        <View style={styles.resultContiner} />
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Text style={styles.buttonText}>AQA-Paper X (May 2021)</Text>
-          <Image
-            style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
-          />
-        </TouchableOpacity>
-
 
       </View>
     </View>
