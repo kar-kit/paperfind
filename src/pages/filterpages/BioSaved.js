@@ -17,7 +17,7 @@ import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "fireb
 import { db } from '../../../config';
 
 //Page Function
-function ChemSaved({ navigation }) {
+function BioSaved({ navigation }) {
   //UseState Varibles for subfunctions and return data
   const [searchTerms, setSearchTerms] = useState('');
   const [itemList, setItemList] = useState([]);
@@ -29,7 +29,7 @@ function ChemSaved({ navigation }) {
 
 
   async function retriveData() {
-    const q = query(collection(db, "papers"), where("favourite", "==", true), where('subject', '==', 'chemistry'));
+    const q = query(collection(db, "papers"), where("favourite", "==", true), where('subject', '==', 'biology'));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -109,7 +109,7 @@ function ChemSaved({ navigation }) {
       <View style={styles.container}>
 
         <View style={styles.headerBorderContainer}>
-          <Text style={styles.headerText}>Saved Chemistry Papers</Text>
+          <Text style={styles.headerText}>Saved Biology Papers</Text>
         </View>
 
         <SafeAreaView>
@@ -126,7 +126,7 @@ function ChemSaved({ navigation }) {
   );
 }
 
-export default ChemSaved;
+export default BioSaved;
 
 const styles = StyleSheet.create({
   containerPage: {
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     borderWidth: 4,
-    borderColor: '#FF7171',
+    borderColor: '#B3FF8F',
   },
   buttonText: {
     color: "black",

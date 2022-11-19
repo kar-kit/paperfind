@@ -1,20 +1,100 @@
+//Global Imports
+import * as OpenAnything from 'react-native-openanything'
+
 //Package imports
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Image,
+  FlatList,
+  SafeAreaView,
 } from "react-native";
+import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+
+import { db } from '../../../config';
 
 //Page Function
 function FilterSaved({ navigation }) {
+  //UseState Varibles for subfunctions and return data
+  const [searchTerms, setSearchTerms] = useState('');
+  const [itemList, setItemList] = useState([]);
+
+  useEffect(() => {
+    setItemList('')
+    retriveData()
+  }, []);
+
+
+  async function retriveData() {
+    const q = query(collection(db, "papers"), where("favourite", "==", true));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      const paper = doc.data()
+      setItemList(arr => [...arr, {
+        'title': paper.displayname,
+        'link': paper.downloadurl,
+        'examboard': paper.examboard,
+        'subject': paper.subject,
+        'id': doc.id
+      }]);
+      console.log('ran successfully')
+    });
+  }
+
+  async function favoriteItem(idCred) {
+    const itemRef = doc(db, 'papers', idCred)
+    const docSnap = await getDoc(itemRef)
+
+    if (docSnap.exists()) {
+      if (docSnap.data().favourite === true) {
+        await updateDoc(itemRef, {
+          favourite: false
+        });
+      }
+      else if (docSnap.data().favourite === false) {
+        await updateDoc(itemRef, {
+          favourite: true
+        });
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+
+  }
 
   //Navigation function
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
+
+  const Item = ({ title, link, examboard, subject, idCred }) => (
+    <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
+      <View style={styles.buttonHeader}>
+        <Text style={styles.buttonText}>{title}</Text>
+
+        <TouchableOpacity onPress={() => favoriteItem(idCred)}>
+          <Image
+            style={styles.searchImage}
+            source={require("../../assets/images/saved-icon.png")}
+          />
+        </TouchableOpacity>
+
+      </View>
+      <View>
+        <Text style={styles.buttonText2}>{subject} {examboard}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderItem = ({ item }) => (
+    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
+  );
 
   return (
     <View style={styles.containerPage}>
@@ -32,6 +112,13 @@ function FilterSaved({ navigation }) {
           <Text style={styles.headerText}>Saved Papers</Text>
         </View>
 
+        <SafeAreaView>
+          <FlatList
+            data={itemList}
+            renderItem={renderItem}
+          />
+        </SafeAreaView>
+
 
 
       </View>
@@ -46,17 +133,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
+  buttonItem: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 5,
+    width: 330,
+  },
+  buttonHeader: {
+    flexDirection: "row",
+    marginBottom: -10,
+  },
   container: {
     padding: 10,
     flex: 1,
     alignItems: 'center',
-  },
-  header: {
-    alignContent: 'center',
-  },
-  profileIcon: {
-    marginTop: -10,
-    marginRight: 10,
   },
   headerText: {
     fontFamily: "Inter-Black",
@@ -70,45 +161,27 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#FFEB81',
   },
-  resultContiner: {
-    marginTop: 20,
-  },
   buttonText: {
     color: "black",
-    fontWeight: "600",
-    fontSize: 22,
+    fontWeight: "700",
+    fontSize: 18,
     flexDirection: "row",
-    justifyContent: 'flex-start',
-    padding: 10,
+    justifyContent: 'flex-start'
+  },
+  buttonText2: {
+    color: "black",
+    fontWeight: "300",
+    fontSize: 15,
+    flexDirection: "row",
+    justifyContent: 'flex-start'
   },
   searchImage: {
-    marginTop: 4,
-    marginLeft: 30,
-    width: 40,
-    height: 40,
-  },
-  buttonSearch: {
-    backgroundColor: "white",
-    width: "90%",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    flexDirection: "row",
-    justifyContent: 'flex-start',
-  },
-  buttonSearchContainer: {
-    backgroundColor: "white",
-    width: "90%",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    flexDirection: "row",
-    justifyContent: 'flex-start',
+    width: 30,
+    height: 30,
+    marginLeft: 150,
+    alignItems: 'flex-end',
   },
 
-  imagecontainer: {
-    marginTop: -150,
-  },
   image: {
     height: 205,
     width: 290,
@@ -151,69 +224,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "700",
     fontSize: 15,
-  },
-  filterContainer1: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 30,
-  },
-  filterContainer2: {
-    flex: 1,
-    flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    marginTop: -150,
-  },
-  filterBoxImage: {
-    width: 110,
-    height: 110,
-  },
-  filterButtonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 18,
-    flexDirection: "row",
-    justifyContent: 'flex-start'
-  },
-  filterBox1: {
-    backgroundColor: '#FFEB81',
-    alignItems: 'center',
-    width: "45%",
-    height: '55%',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    margin: 5,
-  },
-  filterBox2: {
-    backgroundColor: '#B3FF8F',
-    alignItems: 'center',
-    width: "45%",
-    height: '55%',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    margin: 5,
-  },
-  filterBox3: {
-    backgroundColor: '#FF7171',
-    alignItems: 'center',
-    width: "45%",
-    height: '55%',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    margin: 5,
-  },
-  filterBox4: {
-    backgroundColor: '#75E6FF',
-    alignItems: 'center',
-    width: "45%",
-    height: '55%',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    margin: 5,
   },
 
 });

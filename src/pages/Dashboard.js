@@ -32,6 +32,10 @@ function Dashboard({ navigation }) {
     navigation.navigate("Chemistry");
   };
 
+  const onFilterBio = () => {
+    navigation.navigate("Biology");
+  };
+
 
 
   const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
@@ -81,7 +85,7 @@ function Dashboard({ navigation }) {
             <Text style={styles.filterButtonText}>Saved</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.filterBox2}>
+          <TouchableOpacity style={styles.filterBox2} onPress={onFilterBio}>
             <Image
               style={styles.filterBoxImage}
               source={require("../assets/images/filterBio.png")}

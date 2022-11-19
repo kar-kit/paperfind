@@ -18,6 +18,7 @@ import Search from '../pages/Search';
 
 import FilterSaved from '../pages/filterpages/FilterSaved';
 import ChemSaved from '../pages/filterpages/ChemSaved';
+import BioSaved from '../pages/filterpages/BioSaved';
 
 
 
@@ -120,6 +121,16 @@ function DrawerNavBar() {
       <Drawer.Screen
         name="Chemistry"
         component={ChemSaved}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+          swipeEnabled: false,
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="Biology"
+        component={BioSaved}
         options={{
           headerShown: false,
           gestureEnabled: false,
