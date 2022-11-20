@@ -2,7 +2,7 @@
 import * as OpenAnything from 'react-native-openanything'
 
 //Package Imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Component } from "react";
 import { ref, getDownloadURL, listAll, getMetadata, list } from "firebase/storage";
 
 import {
@@ -23,7 +23,6 @@ import { db } from '../../config';
 
 import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 
-
 //Page Function
 function Search({ navigation }) {
   //UseState Varibles for subfunctions and return data
@@ -31,6 +30,17 @@ function Search({ navigation }) {
   const [itemList, setItemList] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showItems, setShowItems] = useState(true);
+
+  const [isActive1, setIsActive1] = useState(false);
+  const [isActive2, setIsActive2] = useState(false);
+  const [isActive3, setIsActive3] = useState(false);
+  const [isActive4, setIsActive4] = useState(false);
+  const [isActive5, setIsActive5] = useState(false);
+  const [isActive6, setIsActive6] = useState(false);
+  const [isActive7, setIsActive7] = useState(false);
+  const [isActive8, setIsActive8] = useState(false);
+
+
 
   useEffect(() => {
     setItemList('')
@@ -171,29 +181,56 @@ function Search({ navigation }) {
 
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>Biology</Text>
-                  </TouchableOpacity>
+                  {isActive1 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive1(false)}>
+                      <Text>Biology</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive1(true)}>
+                      <Text>Biology</Text>
+                    </TouchableOpacity>
+                  )}
+
+
+
                 </View>
 
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>Chemistry</Text>
-                  </TouchableOpacity>
+                  {isActive2 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive2(false)}>
+                      <Text>Chemistry</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive2(true)}>
+                      <Text>Chemistry</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>Physics</Text>
-                  </TouchableOpacity>
+                  {isActive3 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive3(false)}>
+                      <Text>Physics</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive3(true)}>
+                      <Text>Physics</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>Maths</Text>
-                  </TouchableOpacity>
+                  {isActive4 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive4(false)}>
+                      <Text>Maths</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive4(true)}>
+                      <Text>Maths</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
@@ -206,29 +243,53 @@ function Search({ navigation }) {
 
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>AQA</Text>
-                  </TouchableOpacity>
+                  {isActive5 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive5(false)}>
+                      <Text>AQA</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive5(true)}>
+                      <Text>AQA</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>Edexcel</Text>
-                  </TouchableOpacity>
+                  {isActive6 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive6(false)}>
+                      <Text>Edexcel</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive6(true)}>
+                      <Text>Edexcel</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>OCR</Text>
-                  </TouchableOpacity>
+                  {isActive7 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive7(false)}>
+                      <Text>OCR</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive7(true)}>
+                      <Text>OCR</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 <View style={styles.filterSub}>
-                  <TouchableOpacity style={styles.buttonFilter}>
-                    <Text>WJEC</Text>
-                  </TouchableOpacity>
+                  {isActive8 ? (
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive8(false)}>
+                      <Text>WJEC</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive8(true)}>
+                      <Text>WJEC</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
@@ -367,8 +428,15 @@ const styles = StyleSheet.create({
     width: 330,
   },
 
-  buttonFilter: {
+  buttonFilterOn: {
     backgroundColor: "white",
+    justifyContent: 'flex-end',
+    padding: 15,
+    borderRadius: 10,
+    width: 160,
+  },
+  buttonFilterOff: {
+    backgroundColor: "#D0D0D0",
     justifyContent: 'flex-end',
     padding: 15,
     borderRadius: 10,
