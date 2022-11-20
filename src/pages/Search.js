@@ -29,8 +29,8 @@ function Search({ navigation }) {
   //UseState Varibles for subfunctions and return data
   const [searchTerms, setSearchTerms] = useState('');
   const [itemList, setItemList] = useState([]);
-  const [downloadLink, setDownloadLink] = useState();
-  const [metadata, setMetadata] = useState();
+  const [showFilters, setShowFilters] = useState(false);
+  const [showItems, setShowItems] = useState(true);
 
   useEffect(() => {
     setItemList('')
@@ -43,13 +43,15 @@ function Search({ navigation }) {
     navigation.navigate("Dashboard");
   };
 
-  const onFilterSaved = () => {
-    navigation.navigate("Saved");
-  };
+  const swapElements1 = () => {
+    setShowFilters(true)
+    setShowItems(false)
+  }
 
-  const onFilterChem = () => {
-    navigation.navigate("Chemistry");
-  };
+  const swapElements2 = () => {
+    setShowFilters(false)
+    setShowItems(true)
+  }
 
 
   async function retriveData() {
@@ -103,23 +105,24 @@ function Search({ navigation }) {
     <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
   );
 
+
   async function favoriteItem(idCred) {
     const itemRef = doc(db, 'papers', idCred)
     const docSnap = await getDoc(itemRef)
 
     // await updateDoc(itemRef, {
-    //   favourite: true
+    //   favorite: true
     // });
 
     if (docSnap.exists()) {
-      if (docSnap.data().favourite === true) {
+      if (docSnap.data().favorite === true) {
         await updateDoc(itemRef, {
-          favourite: false
+          favorite: false
         });
       }
-      else if (docSnap.data().favourite === false) {
+      else if (docSnap.data().favorite === false) {
         await updateDoc(itemRef, {
-          favourite: true
+          favorite: true
         });
       }
     } else {
@@ -139,7 +142,13 @@ function Search({ navigation }) {
         />
       </TouchableOpacity>
 
+
       <View style={styles.header}>
+
+        <TouchableOpacity style={styles.filterSelectButton} onPress={swapElements1}>
+          <Text style={styles.filterText}>Filters</Text>
+        </TouchableOpacity>
+
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="What would you like to find"
@@ -152,14 +161,96 @@ function Search({ navigation }) {
         </View>
       </View>
 
+      {showFilters ?
+        (
+          <View>
+            <View style={styles.filterContainer}>
+              <View style={styles.filterTextS}>
+                <Text style={styles.filterTextST}>Subject</Text>
+              </View>
+
+              <View style={styles.filterSection}>
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>Biology</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>Chemistry</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.filterSection}>
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>Physics</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>Maths</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+
+            <View style={styles.filterContainer}>
+              <View style={styles.filterTextS}>
+                <Text style={styles.filterTextST}>Exam Board</Text>
+              </View>
+
+              <View style={styles.filterSection}>
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>AQA</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>Edexcel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.filterSection}>
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>OCR</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.filterSub}>
+                  <TouchableOpacity style={styles.buttonFilter}>
+                    <Text>WJEC</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            <View style={{ marginTop: 10 }}>
+              <Button onPress={swapElements2} title='Confirm' />
+            </View>
+
+          </View>
+        ) : null}
+
       <View style={styles.container}>
 
-        <SafeAreaView>
-          <FlatList
-            data={itemList}
-            renderItem={renderItem}
-          />
-        </SafeAreaView>
+        {showItems ?
+          (
+            <SafeAreaView>
+              <FlatList
+                data={itemList}
+                renderItem={renderItem}
+              />
+            </SafeAreaView>
+          ) : null}
 
       </View>
     </View>
@@ -191,6 +282,34 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
     alignItems: 'center',
     // marginLeft: 50,
+  },
+  filterSelectButton: {
+    marginTop: -10,
+    marginLeft: 250,
+  },
+  filterText: {
+    color: '#79CFFF',
+    fontFamily: 'Inter-Black',
+    fontSize: 15
+  },
+  filterSection: {
+    marginLeft: 25,
+    flexDirection: 'row',
+  },
+  filterContainer1: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: 30,
+  },
+  filterContainer2: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: -150,
+  },
+  filterSub: {
+    padding: 5,
   },
   profileIcon: {
     marginTop: -10,
@@ -248,6 +367,14 @@ const styles = StyleSheet.create({
     width: 330,
   },
 
+  buttonFilter: {
+    backgroundColor: "white",
+    justifyContent: 'flex-end',
+    padding: 15,
+    borderRadius: 10,
+    width: 160,
+  },
+
   imagecontainer: {
     marginTop: -150,
   },
@@ -294,17 +421,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 15,
   },
-  filterContainer1: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 30,
+  filterContainer: {
+    marginTop: 10,
   },
-  filterContainer2: {
-    flex: 1,
-    flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    marginTop: -150,
+  filterTextS: {
+    marginLeft: 30,
+  },
+  filterTextST: {
+    color: "black",
+    fontWeight: "500",
+    fontSize: 17,
+    flexDirection: "row",
+    justifyContent: 'flex-start'
   },
   filterBoxImage: {
     width: 110,

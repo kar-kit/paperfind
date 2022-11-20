@@ -29,7 +29,7 @@ function FilterSaved({ navigation }) {
 
 
   async function retriveData() {
-    const q = query(collection(db, "papers"), where("favourite", "==", true));
+    const q = query(collection(db, "papers"), where("favorite", "==", true));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -46,19 +46,24 @@ function FilterSaved({ navigation }) {
     });
   }
 
+
   async function favoriteItem(idCred) {
     const itemRef = doc(db, 'papers', idCred)
     const docSnap = await getDoc(itemRef)
 
+    // await updateDoc(itemRef, {
+    //   favorite: true
+    // });
+
     if (docSnap.exists()) {
-      if (docSnap.data().favourite === true) {
+      if (docSnap.data().favorite === true) {
         await updateDoc(itemRef, {
-          favourite: false
+          favorite: false
         });
       }
-      else if (docSnap.data().favourite === false) {
+      else if (docSnap.data().favorite === false) {
         await updateDoc(itemRef, {
-          favourite: true
+          favorite: true
         });
       }
     } else {
