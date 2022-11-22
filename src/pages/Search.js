@@ -30,6 +30,7 @@ function Search({ navigation }) {
   const [itemList, setItemList] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showItems, setShowItems] = useState(true);
+  const [firebaseQuery, setFirebaseQuery] = useState();
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -45,7 +46,7 @@ function Search({ navigation }) {
   useEffect(() => {
     setItemList('')
     retriveData()
-  }, [searchTerms]);
+  }, [searchTerms, firebaseQuery]);
 
 
   //Navigation Functions
@@ -63,13 +64,42 @@ function Search({ navigation }) {
     setShowItems(true)
   }
 
+  const bioFilter = () => {
+    if (isActive1 === false) {
+      setFirebaseQuery(query(collection(db, "papers"), where('subject', '==', 'biology')))
+      setIsActive1(true)
+
+      setIsActive2(false)
+      setIsActive3(false)
+      setIsActive4(false)
+    } else {
+      setFirebaseQuery(query(collection(db, "papers")))
+      setIsActive1(false)
+    }
+  }
+
+  const chemFilter = () => {
+    if (isActive1 === false) {
+      setFirebaseQuery(query(collection(db, "papers"), where('subject', '==', 'chemistry')))
+      setIsActive2(true)
+
+      setIsActive1(false)
+      setIsActive3(false)
+      setIsActive4(false)
+    } else {
+      setFirebaseQuery(query(collection(db, "papers")))
+      setIsActive2(false)
+    }
+  }
+
+
+
 
   async function retriveData() {
     setItemList('')
     let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
 
-    // const q = query(collection(db, "papers"), where("name", "==", formattedSearchTerm));
-    const q = query(collection(db, "papers"));
+    const q = firebaseQuery;
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -119,10 +149,6 @@ function Search({ navigation }) {
   async function favoriteItem(idCred) {
     const itemRef = doc(db, 'papers', idCred)
     const docSnap = await getDoc(itemRef)
-
-    // await updateDoc(itemRef, {
-    //   favorite: true
-    // });
 
     if (docSnap.exists()) {
       if (docSnap.data().favorite === true) {
@@ -182,11 +208,11 @@ function Search({ navigation }) {
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
                   {isActive1 ? (
-                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive1(false)}>
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => bioFilter()}>
                       <Text>Biology</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive1(true)}>
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => bioFilter()}>
                       <Text>Biology</Text>
                     </TouchableOpacity>
                   )}
@@ -197,11 +223,11 @@ function Search({ navigation }) {
 
                 <View style={styles.filterSub}>
                   {isActive2 ? (
-                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive2(false)}>
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => chemFilter()}>
                       <Text>Chemistry</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive2(true)}>
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => chemFilter()}>
                       <Text>Chemistry</Text>
                     </TouchableOpacity>
                   )}
