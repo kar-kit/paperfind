@@ -2,7 +2,7 @@
 import * as OpenAnything from 'react-native-openanything'
 
 //Package Imports
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ref, getDownloadURL } from "firebase/storage";
 import {
   View,
@@ -14,10 +14,18 @@ import {
 } from "react-native";
 
 //User Imports
-import { storage } from '../../config';
+import { storage, auth } from '../../config';
 
 //Page Function
 function Dashboard({ navigation }) {
+
+  const [displayName, setDisplayName] = useState('')
+  const [welcomeMessage, setWelcomeMessage] = useState('')
+
+  useEffect(() => {
+    getUserInfo()
+    getWelcomeMessage()
+  }, []);
 
   //Navigation Functions
   const onSearch = () => {
@@ -36,7 +44,31 @@ function Dashboard({ navigation }) {
     navigation.navigate("Biology");
   };
 
+  const onFilterPhys = () => {
+    navigation.navigate("Physics");
+  };
 
+  const getUserInfo = () => {
+    const user = auth.currentUser;
+    if (user !== null) {
+      // The user object has basic properties such as display name, email, etc.
+      const displayName = user.displayName;
+      setDisplayName(displayName)
+    }
+  }
+
+  const getWelcomeMessage = () => {
+    var today = new Date()
+    var curHr = today.getHours()
+
+    if (curHr < 12) {
+      setWelcomeMessage('Good Morning')
+    } else if (curHr < 18) {
+      setWelcomeMessage('Good Afternoon')
+    } else {
+      setWelcomeMessage('Good Evening')
+    }
+  }
 
   const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
 
@@ -55,25 +87,18 @@ function Dashboard({ navigation }) {
 
   return (
     <View style={styles.containerPage}>
-      <View style={styles.header}>
-
-        <Text style={styles.headerText}>Good Morning</Text>
-        <TouchableOpacity style={styles.profileIcon}>
-
-          <Image source={require("../assets/images/profile-icon.png")} />
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.container}>
+
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{welcomeMessage} {displayName}</Text>
+        </View>
+
         <TouchableOpacity style={styles.buttonSearch} onPress={onSearch}>
           <Text style={styles.buttonText}>Search Papers</Text>
           <Image
             style={styles.searchImage}
             source={require("../assets/images/search.png")}
           />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={getPaper}>
-          <Text style={styles.buttonText}>Last Opened</Text>
         </TouchableOpacity>
 
         <View style={styles.filterContainer1}>
@@ -103,7 +128,7 @@ function Dashboard({ navigation }) {
             <Text style={styles.filterButtonText}>Chemistry</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.filterBox4}>
+          <TouchableOpacity style={styles.filterBox4} onPress={onFilterPhys}>
             <Image
               style={styles.filterBoxImage}
               source={require("../assets/images/filterPhy.png")}
@@ -131,9 +156,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    flexDirection: "row",
-    justifyContent: 'flex-end',
+    alignItems: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
   profileIcon: {
     marginTop: -10,
@@ -142,7 +167,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "Inter-Black",
     fontSize: 25,
-    marginRight: '18%',
   },
   buttonText: {
     color: "black",

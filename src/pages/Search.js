@@ -20,7 +20,6 @@ import {
 //User Imports
 import { storage } from '../../config';
 import { db } from '../../config';
-
 import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
 
 //Page Function
@@ -30,7 +29,8 @@ function Search({ navigation }) {
   const [itemList, setItemList] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showItems, setShowItems] = useState(true);
-  const [firebaseQuery, setFirebaseQuery] = useState();
+  const [examBoardChoice, setExamBoardChoice] = useState('edexcel')
+  const [firebaseQuery, setFirebaseQuery] = useState(query(collection(db, "papers"), where('examboard', '==', examBoardChoice)));
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -46,7 +46,7 @@ function Search({ navigation }) {
   useEffect(() => {
     setItemList('')
     retriveData()
-  }, [searchTerms, firebaseQuery]);
+  }, [searchTerms, firebaseQuery, examBoardChoice]);
 
 
   //Navigation Functions
@@ -92,6 +92,34 @@ function Search({ navigation }) {
     }
   }
 
+  const aqaFilter = () => {
+    if (isActive5 === false) {
+      setExamBoardChoice('aqa')
+      setIsActive5(true)
+
+      setIsActive6(false)
+      setIsActive7(false)
+      setIsActive8(false)
+    } else {
+      setExamBoardChoice('edexcel')
+      setIsActive5(false)
+    }
+  }
+
+  const edexcelFilter = () => {
+    if (isActive6 === false) {
+      setExamBoardChoice('edexcel')
+      setIsActive6(true)
+
+      setIsActive5(false)
+      setIsActive7(false)
+      setIsActive8(false)
+    } else {
+      setExamBoardChoice('edexcel')
+      setIsActive6(false)
+    }
+  }
+
 
 
 
@@ -106,7 +134,7 @@ function Search({ navigation }) {
       // doc.data() is never undefined for query doc snapshots
       const paper = doc.data()
       if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
-        if (itemList.includes(doc.id) === false) {
+        if (itemList.includes(doc.id) === false && paper.examboard === examBoardChoice) {
 
           setItemList(arr => [...arr, {
             'title': paper.displayname,
@@ -270,11 +298,11 @@ function Search({ navigation }) {
               <View style={styles.filterSection}>
                 <View style={styles.filterSub}>
                   {isActive5 ? (
-                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive5(false)}>
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => aqaFilter()}>
                       <Text>AQA</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive5(true)}>
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => aqaFilter()}>
                       <Text>AQA</Text>
                     </TouchableOpacity>
                   )}
@@ -282,11 +310,11 @@ function Search({ navigation }) {
 
                 <View style={styles.filterSub}>
                   {isActive6 ? (
-                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => setIsActive6(false)}>
+                    <TouchableOpacity style={styles.buttonFilterOff} onPress={() => edexcelFilter()}>
                       <Text>Edexcel</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => setIsActive6(true)}>
+                    <TouchableOpacity style={styles.buttonFilterOn} onPress={() => edexcelFilter()}>
                       <Text>Edexcel</Text>
                     </TouchableOpacity>
                   )}

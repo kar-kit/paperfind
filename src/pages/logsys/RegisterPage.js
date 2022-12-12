@@ -41,7 +41,7 @@ const RegisterPage = ({ navigation }) => {
       return;
     }
     //Writing user data to firebase
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, email, password, fullName)
       .then((userCredential) => {
         //After new user created navigate to the dashboard
         const user = userCredential.user;
