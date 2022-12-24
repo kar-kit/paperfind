@@ -18,9 +18,9 @@ import {
 } from "react-native";
 
 //User Imports
-import { storage } from '../../config';
-import { db } from '../../config';
-import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+import { db, auth, storage } from '../../config';
+import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 //Page Function
 function Search({ navigation }) {
@@ -31,6 +31,7 @@ function Search({ navigation }) {
   const [showItems, setShowItems] = useState(true);
   const [examBoardChoice, setExamBoardChoice] = useState('edexcel')
   const [firebaseQuery, setFirebaseQuery] = useState(query(collection(db, "papers"), where('examboard', '==', examBoardChoice)));
+  const [userID, setUserID] = useState('');
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -48,6 +49,20 @@ function Search({ navigation }) {
     retriveData()
   }, [searchTerms, firebaseQuery, examBoardChoice]);
 
+  useEffect(() => {
+    getUserID()
+  }, []);
+
+  const getUserID = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserID(uid)
+      } else {
+        console.log('error cannot find user id')
+      }
+    });
+  }
 
   //Navigation Functions
   const onBackArrowPress = () => {
@@ -174,24 +189,50 @@ function Search({ navigation }) {
   );
 
 
+  // async function favoriteItem(idCred) {
+  //   const itemRef = doc(db, 'papers', idCred)
+  //   const docSnap = await getDoc(itemRef)
+
+  //   if (docSnap.exists()) {
+  //     if (docSnap.data().favorite === true) {
+  //       await updateDoc(itemRef, {
+  //         favorite: false
+  //       });
+  //     }
+  //     else if (docSnap.data().favorite === false) {
+  //       await updateDoc(itemRef, {
+  //         favorite: true
+  //       });
+  //     }
+  //   } else {
+  //     // doc.data() will be undefined in this case
+  //     console.log("No such document!");
+  //   }
+
+  // }
+
   async function favoriteItem(idCred) {
-    const itemRef = doc(db, 'papers', idCred)
+    const itemRef = doc(db, 'users', userID)
     const docSnap = await getDoc(itemRef)
 
     if (docSnap.exists()) {
-      if (docSnap.data().favorite === true) {
+      if (docSnap.data().favorites.includes(idCred) === true) {
         await updateDoc(itemRef, {
           favorite: false
         });
       }
-      else if (docSnap.data().favorite === false) {
+      else if (docSnap.data().favorites.includes(idCred) === false) {
+        let Fpapers = docSnap.data().favorites
         await updateDoc(itemRef, {
-          favorite: true
+          favorites: [Fpapers, idCred]
         });
       }
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
+      const docData = {
+        favourites: [idCred]
+      }
+      await setDoc(doc(db, "users", userID), docData);
     }
 
   }
