@@ -19,7 +19,7 @@ import {
 
 //User Imports
 import { db, auth, storage } from '../../config';
-import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 //Page Function
@@ -218,19 +218,18 @@ function Search({ navigation }) {
     if (docSnap.exists()) {
       if (docSnap.data().favorites.includes(idCred) === true) {
         await updateDoc(itemRef, {
-          favorite: false
+          favorites: arrayRemove(idCred)
         });
       }
       else if (docSnap.data().favorites.includes(idCred) === false) {
-        let Fpapers = docSnap.data().favorites
         await updateDoc(itemRef, {
-          favorites: [Fpapers, idCred]
+          favorites: arrayUnion(idCred)
         });
       }
     } else {
       // doc.data() will be undefined in this case
       const docData = {
-        favourites: [idCred]
+        favorites: [idCred]
       }
       await setDoc(doc(db, "users", userID), docData);
     }
