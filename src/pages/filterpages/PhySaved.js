@@ -48,27 +48,26 @@ function PhysSaved({ navigation }) {
 
 
   async function favoriteItem(idCred) {
-    const itemRef = doc(db, 'papers', idCred)
+    const itemRef = doc(db, 'users', userID)
     const docSnap = await getDoc(itemRef)
 
-    // await updateDoc(itemRef, {
-    //   favorite: true
-    // });
-
     if (docSnap.exists()) {
-      if (docSnap.data().favorite === true) {
+      if (docSnap.data().favorites.includes(idCred) === true) {
         await updateDoc(itemRef, {
-          favorite: false
+          favorites: arrayRemove(idCred)
         });
       }
-      else if (docSnap.data().favorite === false) {
+      else if (docSnap.data().favorites.includes(idCred) === false) {
         await updateDoc(itemRef, {
-          favorite: true
+          favorites: arrayUnion(idCred)
         });
       }
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
+      const docData = {
+        favorites: [idCred]
+      }
+      await setDoc(doc(db, "users", userID), docData);
     }
 
   }

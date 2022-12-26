@@ -13,23 +13,71 @@ import {
   SafeAreaView,
 } from "react-native";
 import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-import { db } from '../../../config';
+import { db, auth } from '../../../config';
 
 //Page Function
 function FilterSaved({ navigation }) {
   //UseState Varibles for subfunctions and return data
   const [searchTerms, setSearchTerms] = useState('');
   const [itemList, setItemList] = useState([]);
+  const [userID, setUserID] = useState('');
+  const [favArray, setFavArray] = useState([]);
 
   useEffect(() => {
     setItemList('')
+    getUserID()
     retriveData()
   }, []);
 
 
+  const getUserID = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserID(uid)
+      } else {
+        console.log('error cannot find user id')
+      }
+    });
+  }
+
+  // async function retriveData() {
+  //   const q = query(collection(db, "papers"), where("favorite", "==", true));
+
+  //   const querySnapshot = await getDocs(q);
+  //   querySnapshot.forEach((doc) => {
+  //     // doc.data() is never undefined for query doc snapshots
+  //     const paper = doc.data()
+  //     setItemList(arr => [...arr, {
+  //       'title': paper.displayname,
+  //       'link': paper.downloadurl,
+  //       'examboard': paper.examboard,
+  //       'subject': paper.subject,
+  //       'id': doc.id
+  //     }]);
+  //     console.log('ran successfully')
+  //   });
+  // }
+
   async function retriveData() {
-    const q = query(collection(db, "papers"), where("favorite", "==", true));
+
+    const userQuery = query(collection(db, 'users', userID))
+
+
+    const querySnapshot1 = await getDocs(userQuery);
+    querySnapshot1.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      const user = doc.data()
+      setFavArray(user.favorites)
+      console.log(favArray)
+    });
+
+
+
+
+    const q = query(collection(db, "papers"), where("uid", "array-contains-any", favArray));
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -48,27 +96,26 @@ function FilterSaved({ navigation }) {
 
 
   async function favoriteItem(idCred) {
-    const itemRef = doc(db, 'papers', idCred)
+    const itemRef = doc(db, 'users', userID)
     const docSnap = await getDoc(itemRef)
 
-    // await updateDoc(itemRef, {
-    //   favorite: true
-    // });
-
     if (docSnap.exists()) {
-      if (docSnap.data().favorite === true) {
+      if (docSnap.data().favorites.includes(idCred) === true) {
         await updateDoc(itemRef, {
-          favorite: false
+          favorites: arrayRemove(idCred)
         });
       }
-      else if (docSnap.data().favorite === false) {
+      else if (docSnap.data().favorites.includes(idCred) === false) {
         await updateDoc(itemRef, {
-          favorite: true
+          favorites: arrayUnion(idCred)
         });
       }
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
+      const docData = {
+        favorites: [idCred]
+      }
+      await setDoc(doc(db, "users", userID), docData);
     }
 
   }
