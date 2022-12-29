@@ -62,33 +62,32 @@ function FilterSaved({ navigation }) {
   // }
 
   async function retriveData() {
+
     const docRef = doc(db, "users", userID);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       setFavArray(docSnap.data().favorites);
+      favArray.forEach(async (paperID) => {
+        const paperRef = doc(db, 'papers', paperID)
+        const paperSnap = await getDoc(paperRef)
+
+        if (paperSnap.exists()) {
+          const paper = paperSnap.data()
+          setItemList(arr => [...arr, {
+            'title': paper.displayname,
+            'link': paper.downloadurl,
+            'examboard': paper.examboard,
+            'subject': paper.subject,
+            'id': doc.id
+          }]);
+          console.log('ran successfully')
+        }
+      })
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
     }
-
-
-
-    const q = query(collection(db, "papers"), where("uid", "array-contains-any", favArray));
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc2) => {
-      // doc.data() is never undefined for query doc snapshots
-      const paper = doc2.data()
-      setItemList(arr => [...arr, {
-        'title': paper.displayname,
-        'link': paper.downloadurl,
-        'examboard': paper.examboard,
-        'subject': paper.subject,
-        'id': doc.id
-      }]);
-      console.log('ran successfully')
-    });
   }
 
 
