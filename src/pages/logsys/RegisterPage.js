@@ -76,6 +76,7 @@ const RegisterPage = ({ navigation }) => {
             onChangeText={(text) => setFullName(text)}
             style={styles.input}
             autoCapitalize="none"
+            placeholderTextColor='grey'
           ></TextInput>
 
           <TextInput
@@ -84,6 +85,7 @@ const RegisterPage = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             style={styles.input}
             autoCapitalize="none"
+            placeholderTextColor='grey'
           ></TextInput>
 
           <TextInput
@@ -93,6 +95,7 @@ const RegisterPage = ({ navigation }) => {
             style={styles.input}
             secureTextEntry
             autoCapitalize="none"
+            placeholderTextColor='grey'
           ></TextInput>
 
           <TextInput
@@ -102,6 +105,7 @@ const RegisterPage = ({ navigation }) => {
             style={styles.input}
             secureTextEntry
             autoCapitalize="none"
+            placeholderTextColor='grey'
           ></TextInput>
         </View>
 

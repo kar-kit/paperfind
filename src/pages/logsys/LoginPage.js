@@ -68,6 +68,7 @@ const LoginPage = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             style={styles.input}
             autoCapitalize="none"
+            placeholderTextColor='grey'
           ></TextInput>
 
           <TextInput
@@ -76,6 +77,7 @@ const LoginPage = ({ navigation }) => {
             onChangeText={(text) => setPassword(text)}
             style={styles.input}
             autoCapitalize="none"
+            placeholderTextColor='grey'
             secureTextEntry
           ></TextInput>
         </View>

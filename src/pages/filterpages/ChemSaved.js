@@ -12,38 +12,70 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { collection, query, where, getDocs, getDoc, doc, updateDoc } from "firebase/firestore";
-
-import { db } from '../../../config';
+import { collection, query, where, getDocs, getDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useFocusEffect } from '@react-navigation/native';
+import { db, auth } from '../../../config';
 
 //Page Function
 function ChemSaved({ navigation }) {
   //UseState Varibles for subfunctions and return data
-  const [searchTerms, setSearchTerms] = useState('');
   const [itemList, setItemList] = useState([]);
+  const [userID, setUserID] = useState('');
+
 
   useEffect(() => {
     setItemList('')
-    retriveData()
+    getUserID()
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setItemList('')
+      retriveData()
+    }, [userID])
+  );
+
+  const getUserID = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserID(uid)
+      } else {
+        console.log('error cannot find user id')
+      }
+    });
+  }
 
   async function retriveData() {
-    const q = query(collection(db, "papers"), where("favorite", "==", true), where('subject', '==', 'chemistry'));
+    const docRef = doc(db, "users", userID);
+    // const docRef = doc(db, "users", 're3gVuQyj1PJeGmzkNzvKzSjCTs1');
+    const docSnap = await getDoc(docRef);
 
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      const paper = doc.data()
-      setItemList(arr => [...arr, {
-        'title': paper.displayname,
-        'link': paper.downloadurl,
-        'examboard': paper.examboard,
-        'subject': paper.subject,
-        'id': doc.id
-      }]);
-      console.log('ran successfully')
-    });
+    if (docSnap.exists()) {
+      const userData = docSnap.data().favorites
+      userData.forEach(async (paperID) => {
+        const paperRef = doc(db, 'papers', paperID)
+        const paperSnap = await getDoc(paperRef)
+
+        if (paperSnap.exists()) {
+          const paper = paperSnap.data()
+          if (paper.subject == 'chemistry') {
+            setItemList(arr => [...arr, {
+              'title': paper.displayname,
+              'link': paper.downloadurl,
+              'examboard': paper.examboard,
+              'subject': paper.subject,
+              'id': doc.id
+            }]);
+          }
+          console.log('ran successfully')
+        }
+      })
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
   }
 
 
@@ -56,11 +88,13 @@ function ChemSaved({ navigation }) {
         await updateDoc(itemRef, {
           favorites: arrayRemove(idCred)
         });
+        retriveData()
       }
       else if (docSnap.data().favorites.includes(idCred) === false) {
         await updateDoc(itemRef, {
           favorites: arrayUnion(idCred)
         });
+        retriveData()
       }
     } else {
       // doc.data() will be undefined in this case
@@ -71,6 +105,7 @@ function ChemSaved({ navigation }) {
     }
 
   }
+
 
   //Navigation function
   const onBackArrowPress = () => {
