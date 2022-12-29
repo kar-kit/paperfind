@@ -62,27 +62,24 @@ function FilterSaved({ navigation }) {
   // }
 
   async function retriveData() {
+    const docRef = doc(db, "users", userID);
+    const docSnap = await getDoc(docRef);
 
-    const userQuery = query(collection(db, 'users', userID))
-
-
-    const querySnapshot1 = await getDocs(userQuery);
-    querySnapshot1.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      const user = doc.data()
-      setFavArray(user.favorites)
-      console.log(favArray)
-    });
-
+    if (docSnap.exists()) {
+      setFavArray(docSnap.data().favorites);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
 
 
 
     const q = query(collection(db, "papers"), where("uid", "array-contains-any", favArray));
 
     const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach((doc2) => {
       // doc.data() is never undefined for query doc snapshots
-      const paper = doc.data()
+      const paper = doc2.data()
       setItemList(arr => [...arr, {
         'title': paper.displayname,
         'link': paper.downloadurl,
