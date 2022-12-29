@@ -29,7 +29,7 @@ function CustomDrawerContent(props) {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        navigation.navigate("Login");
+        navigation.navigate("Landing");
       })
       .catch((error) => {
         // An error happened.
