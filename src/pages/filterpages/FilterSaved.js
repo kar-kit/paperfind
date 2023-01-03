@@ -67,14 +67,14 @@ function FilterSaved({ navigation }) {
             'link': paper.downloadurl,
             'examboard': paper.examboard,
             'subject': paper.subject,
-            'id': doc.id
+            'id': paperSnap.id
           }]);
-          console.log('ran successfully')
         }
       })
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
+      alert('No documents have been saved, Please go to the search section to find papers')
     }
   }
 
@@ -83,25 +83,36 @@ function FilterSaved({ navigation }) {
     const itemRef = doc(db, 'users', userID)
     const docSnap = await getDoc(itemRef)
 
+    // if (docSnap.exists()) {
+    //   if (docSnap.data().favorites.includes(idCred) === true) {
+    //     await updateDoc(itemRef, {
+    //       favorites: arrayRemove(idCred)
+    //     });
+    //     retriveData()
+    //   }
+    //   else if (docSnap.data().favorites.includes(idCred) === false) {
+    //     await updateDoc(itemRef, {
+    //       favorites: arrayUnion(idCred)
+    //     });
+    //     retriveData()
+    //   }
+    // } else {
+    //   // doc.data() will be undefined in this case
+    //   const docData = {
+    //     favorites: [idCred]
+    //   }
+    //   await setDoc(doc(db, "users", userID), docData);
+    // }
+
     if (docSnap.exists()) {
-      if (docSnap.data().favorites.includes(idCred) === true) {
-        await updateDoc(itemRef, {
-          favorites: arrayRemove(idCred)
-        });
-        retriveData()
-      }
-      else if (docSnap.data().favorites.includes(idCred) === false) {
-        await updateDoc(itemRef, {
-          favorites: arrayUnion(idCred)
-        });
-        retriveData()
-      }
+      console.log(idCred)
+      await updateDoc(itemRef, {
+        favorites: arrayRemove(idCred)
+      })
+      setItemList('')
+      retriveData()
     } else {
-      // doc.data() will be undefined in this case
-      const docData = {
-        favorites: [idCred]
-      }
-      await setDoc(doc(db, "users", userID), docData);
+      alert('No documents have been saved')
     }
 
   }
@@ -110,6 +121,10 @@ function FilterSaved({ navigation }) {
   const onBackArrowPress = () => {
     navigation.navigate("Dashboard");
   };
+
+  const renderItem = ({ item }) => (
+    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
+  );
 
   const Item = ({ title, link, examboard, subject, idCred }) => (
     <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
@@ -130,9 +145,6 @@ function FilterSaved({ navigation }) {
     </TouchableOpacity>
   );
 
-  const renderItem = ({ item }) => (
-    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
-  );
 
   return (
     <View style={styles.containerPage}>
