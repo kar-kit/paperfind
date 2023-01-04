@@ -49,15 +49,22 @@ function Search({ navigation }) {
 
   useEffect(() => {
     getUserID()
-  }, []);
+    retriveFav()
+    setItemList('')
+  }, [searchTerms, examBoardChoice]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setItemList('')
-      retriveFav()
-      retriveData()
-    }, [searchTerms, favArray, examBoardChoice])
-  );
+  useEffect(() => {
+    setItemList('')
+    retriveData()
+  }, [searchTerms, examBoardChoice]);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     setItemList('')
+  //     retriveFav()
+  //     retriveData()
+  //   }, [])
+  // );
 
   const getUserID = () => {
     onAuthStateChanged(auth, (user) => {
@@ -142,7 +149,7 @@ function Search({ navigation }) {
   }
 
   async function retriveFav() {
-
+    getUserID()
     const docRef = doc(db, "users", userID);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -253,12 +260,17 @@ function Search({ navigation }) {
         await updateDoc(itemRef, {
           favorites: arrayRemove(idCred)
         });
+        retriveFav()
+        setItemList('')
         retriveData()
+
       }
       else if (docSnap.data().favorites.includes(idCred) === false) {
         await updateDoc(itemRef, {
           favorites: arrayUnion(idCred)
         });
+        retriveFav()
+        setItemList('')
         retriveData()
       }
     } else {
@@ -267,6 +279,8 @@ function Search({ navigation }) {
         favorites: [idCred]
       }
       await setDoc(doc(db, "users", userID), docData);
+      retriveFav()
+      setItemList('')
       retriveData()
     }
 
