@@ -23,6 +23,7 @@ import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc, arra
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import fillIcon from '../assets/images/fill-saved-icon.png'
 import nonFillIcon from '../assets/images/saved-icon.png'
+import { useFocusEffect } from '@react-navigation/native';
 
 //Page Function
 function Search({ navigation }) {
@@ -50,12 +51,13 @@ function Search({ navigation }) {
     getUserID()
   }, []);
 
-  useEffect(() => {
-    retriveFav()
-    setItemList('')
-    retriveData()
-  }, [searchTerms, firebaseQuery, examBoardChoice]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      setItemList('')
+      retriveFav()
+      retriveData()
+    }, [searchTerms, favArray, examBoardChoice])
+  );
 
   const getUserID = () => {
     onAuthStateChanged(auth, (user) => {
@@ -139,10 +141,11 @@ function Search({ navigation }) {
     }
   }
 
-  async function retriveFav(){
+  async function retriveFav() {
+
     const docRef = doc(db, "users", userID);
     const docSnap = await getDoc(docRef);
-    if (docSnap.exists()){
+    if (docSnap.exists()) {
       const userData = docSnap.data().favorites
       setFavArray(userData)
     }
@@ -166,8 +169,8 @@ function Search({ navigation }) {
       if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
         if (itemList.includes(doc.id) === false && paper.examboard === examBoardChoice) {
 
-          
-          if (favArray.includes(doc.id)){
+
+          if (favArray.includes(doc.id)) {
             setItemList(arr => [...arr, {
               'title': paper.displayname,
               'link': paper.downloadurl,
@@ -176,7 +179,7 @@ function Search({ navigation }) {
               'id': doc.id,
               'favorite': fillIcon
             }]);
-          }else{
+          } else {
             setItemList(arr => [...arr, {
               'title': paper.displayname,
               'link': paper.downloadurl,
@@ -193,19 +196,19 @@ function Search({ navigation }) {
   }
 
 
-  const Item = ({ title, link, examboard, subject, idCred,favorite }) => (
+  const Item = ({ title, link, examboard, subject, idCred, favorite }) => (
     <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
       <View style={styles.buttonHeader}>
         <Text style={styles.buttonText}>{title}</Text>
 
-   
+
         <TouchableOpacity onPress={() => favoriteItem(idCred)}>
           <Image
             style={styles.searchImage}
             source={favorite}
           />
         </TouchableOpacity>
-        
+
 
       </View>
       <View>
@@ -250,11 +253,13 @@ function Search({ navigation }) {
         await updateDoc(itemRef, {
           favorites: arrayRemove(idCred)
         });
+        retriveData()
       }
       else if (docSnap.data().favorites.includes(idCred) === false) {
         await updateDoc(itemRef, {
           favorites: arrayUnion(idCred)
         });
+        retriveData()
       }
     } else {
       // doc.data() will be undefined in this case
@@ -262,6 +267,7 @@ function Search({ navigation }) {
         favorites: [idCred]
       }
       await setDoc(doc(db, "users", userID), docData);
+      retriveData()
     }
 
   }
