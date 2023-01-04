@@ -83,27 +83,6 @@ function FilterSaved({ navigation }) {
     const itemRef = doc(db, 'users', userID)
     const docSnap = await getDoc(itemRef)
 
-    // if (docSnap.exists()) {
-    //   if (docSnap.data().favorites.includes(idCred) === true) {
-    //     await updateDoc(itemRef, {
-    //       favorites: arrayRemove(idCred)
-    //     });
-    //     retriveData()
-    //   }
-    //   else if (docSnap.data().favorites.includes(idCred) === false) {
-    //     await updateDoc(itemRef, {
-    //       favorites: arrayUnion(idCred)
-    //     });
-    //     retriveData()
-    //   }
-    // } else {
-    //   // doc.data() will be undefined in this case
-    //   const docData = {
-    //     favorites: [idCred]
-    //   }
-    //   await setDoc(doc(db, "users", userID), docData);
-    // }
-
     if (docSnap.exists()) {
       console.log(idCred)
       await updateDoc(itemRef, {

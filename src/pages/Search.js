@@ -21,6 +21,8 @@ import {
 import { db, auth, storage } from '../../config';
 import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import fillIcon from '../assets/images/fill-saved-icon.png'
+import nonFillIcon from '../assets/images/saved-icon.png'
 
 //Page Function
 function Search({ navigation }) {
@@ -32,6 +34,7 @@ function Search({ navigation }) {
   const [examBoardChoice, setExamBoardChoice] = useState('edexcel')
   const [firebaseQuery, setFirebaseQuery] = useState(query(collection(db, "papers"), where('examboard', '==', examBoardChoice)));
   const [userID, setUserID] = useState('');
+  const [favArray, setFavArray] = useState([]);
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -43,15 +46,16 @@ function Search({ navigation }) {
   const [isActive8, setIsActive8] = useState(false);
 
 
+  useEffect(() => {
+    getUserID()
+  }, []);
 
   useEffect(() => {
+    retriveFav()
     setItemList('')
     retriveData()
   }, [searchTerms, firebaseQuery, examBoardChoice]);
 
-  useEffect(() => {
-    getUserID()
-  }, []);
 
   const getUserID = () => {
     onAuthStateChanged(auth, (user) => {
@@ -135,10 +139,21 @@ function Search({ navigation }) {
     }
   }
 
+  async function retriveFav(){
+    const docRef = doc(db, "users", userID);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()){
+      const userData = docSnap.data().favorites
+      setFavArray(userData)
+    }
+  }
+
 
 
 
   async function retriveData() {
+
+
     setItemList('')
     let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
 
@@ -151,31 +166,46 @@ function Search({ navigation }) {
       if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
         if (itemList.includes(doc.id) === false && paper.examboard === examBoardChoice) {
 
-          setItemList(arr => [...arr, {
-            'title': paper.displayname,
-            'link': paper.downloadurl,
-            'examboard': paper.examboard,
-            'subject': paper.subject,
-            'id': doc.id
-          }]);
-          console.log('ran successfully')
+          
+          if (favArray.includes(doc.id)){
+            setItemList(arr => [...arr, {
+              'title': paper.displayname,
+              'link': paper.downloadurl,
+              'examboard': paper.examboard,
+              'subject': paper.subject,
+              'id': doc.id,
+              'favorite': fillIcon
+            }]);
+          }else{
+            setItemList(arr => [...arr, {
+              'title': paper.displayname,
+              'link': paper.downloadurl,
+              'examboard': paper.examboard,
+              'subject': paper.subject,
+              'id': doc.id,
+              'favorite': nonFillIcon
+            }]);
+          }
+
         }
       }
     });
   }
 
 
-  const Item = ({ title, link, examboard, subject, idCred }) => (
+  const Item = ({ title, link, examboard, subject, idCred,favorite }) => (
     <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
       <View style={styles.buttonHeader}>
         <Text style={styles.buttonText}>{title}</Text>
 
+   
         <TouchableOpacity onPress={() => favoriteItem(idCred)}>
           <Image
             style={styles.searchImage}
-            source={require("../assets/images/saved-icon.png")}
+            source={favorite}
           />
         </TouchableOpacity>
+        
 
       </View>
       <View>
@@ -185,7 +215,7 @@ function Search({ navigation }) {
   );
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
+    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} favorite={item.favorite} />
   );
 
 
