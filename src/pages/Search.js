@@ -308,7 +308,7 @@ function Search({ navigation }) {
             await updateDoc(itemRef, {
               favorites: arrayRemove(idCred)
             });
-            setItemList('')
+
             retriveData()
     
           }
@@ -316,7 +316,7 @@ function Search({ navigation }) {
             await updateDoc(itemRef, {
               favorites: arrayUnion(idCred)
             });
-            setItemList('')
+
             retriveData()
           }
         } else {
@@ -325,7 +325,7 @@ function Search({ navigation }) {
             favorites: [idCred]
           }
           await setDoc(doc(db, "users", userID), docData);
-          setItemList('')
+
           retriveData()
         }
       } else {
