@@ -42,6 +42,10 @@ function CustomDrawerContent(props) {
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
       </View>
 
+      <View style={styles.textimagecontainer}>
+        <Image source={require('../assets/images/pf-logo-text.png')} style={styles.textimage}/>
+      </View>
+
       <DrawerContentScrollView {...props} style={{ marginTop: -25 }}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
@@ -58,10 +62,14 @@ function CustomDrawerContent(props) {
 export default CustomDrawerContent;
 
 const styles = StyleSheet.create({
+  textimagecontainer: {
+    paddingTop: 50,
+    paddingLeft: 15,
+  },
   textimage: {
-    marginTop: 35,
-    marginLeft: 13,
-    width: "40%",
+    resizeMode: "stretch",
+    height: 100,
+    width: 200,
   },
   texticon: {
     marginLeft: 5,

@@ -48,16 +48,26 @@ function Search({ navigation }) {
 
 
 
-  useEffect(() => {
-    async function runFunctionsInOrder() {
+  // useEffect(() => {
+  //   async function runFunctionsInOrder() {
 
-      await setItemList('');
+  //     await setItemList('');
     
-      await retriveData();
-    }
+  //     await retriveData();
+  //   }
 
-    runFunctionsInOrder();
-  }, [searchTerms, examBoardChoice,firebaseQuery]);
+  //   runFunctionsInOrder();
+  // }, [searchTerms, examBoardChoice,firebaseQuery]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      async function runFunctionsInOrder() {
+        await setItemList('');
+        await retriveData();
+      }
+      runFunctionsInOrder();
+    }, [searchTerms, examBoardChoice,firebaseQuery])
+  );
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -239,7 +249,7 @@ function Search({ navigation }) {
             }]);
             console.log('non-favorite item loaded')
           }
-
+          
         }
       }
     });

@@ -105,7 +105,7 @@ function DrawerNavBar() {
           headerShown: false,
 
           drawerIcon: (color) => (
-            <Anticons name="home" size={22} color={color} />
+            <Anticons name="search1" size={22} color={color} />
           ),
         }}
       />

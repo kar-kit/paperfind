@@ -53,19 +53,19 @@ const Profile = ({ navigation }) => {
 
         <View style={styles.buttonContainer}>
           <View style={styles.button}>
-            <TouchableOpacity onPress={alert(email)}>
+            <TouchableOpacity onPress={() => alert(email)}>
               <Text style={styles.buttonText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.button}>
+          {/* <View style={styles.button}>
             <TouchableOpacity>
               <Text style={styles.buttonText}>Notifications</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           <View style={styles.button}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() =>  alert('version 1.0')}>
               <Text style={styles.buttonText}>About</Text>
             </TouchableOpacity>
           </View>

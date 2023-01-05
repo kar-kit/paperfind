@@ -80,19 +80,29 @@ function FilterSaved({ navigation }) {
 
 
   async function favoriteItem(idCred) {
-    const itemRef = doc(db, 'users', userID)
-    const docSnap = await getDoc(itemRef)
 
-    if (docSnap.exists()) {
-      console.log(idCred)
-      await updateDoc(itemRef, {
-        favorites: arrayRemove(idCred)
-      })
-      setItemList('')
-      retriveData()
-    } else {
-      alert('No documents have been saved')
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const itemRef = doc(db, 'users', uid)
+        const docSnap = await getDoc(itemRef)
+    
+        if (docSnap.exists()) {
+          console.log(idCred)
+          await updateDoc(itemRef, {
+            favorites: arrayRemove(idCred)
+          })
+          setItemList('')
+          retriveData()
+        } else {
+          alert('No documents have been saved')
+        }
+
+      } else {
+        console.log('error cannot find user id')
+      }
+    });
+
 
   }
 
@@ -113,7 +123,7 @@ function FilterSaved({ navigation }) {
         <TouchableOpacity onPress={() => favoriteItem(idCred)}>
           <Image
             style={styles.searchImage}
-            source={require("../../assets/images/saved-icon.png")}
+            source={require("../../assets/images/fill-saved-icon.png")}
           />
         </TouchableOpacity>
 
