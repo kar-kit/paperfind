@@ -1,6 +1,5 @@
 //Package imports
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/core";
 import { auth } from "../../../config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {

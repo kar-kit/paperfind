@@ -12,8 +12,8 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { collection, query, where, getDocs, getDoc, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getDoc, doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { useFocusEffect } from '@react-navigation/native';
 import { db, auth } from '../../../config';
 
@@ -233,36 +233,5 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 10,
   },
-  arrowContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  buttonContainer: {
-    width: "60%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 40,
-  },
-  button: {
-    backgroundColor: "white",
-    width: "90%",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonOutline: {
-    marginTop: 10,
-    backgroundColor: "#3A4252",
-    width: "100%",
-    padding: 13,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-
-  buttonOutlineText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 15,
-  },
-
+  
 });

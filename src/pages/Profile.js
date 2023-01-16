@@ -1,14 +1,11 @@
 //Package Imports
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { signOut } from "firebase/auth";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
-  TextInput,
-  FlatList,
   Image,
 } from "react-native";
 
@@ -57,12 +54,6 @@ const Profile = ({ navigation }) => {
               <Text style={styles.buttonText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>
-
-          {/* <View style={styles.button}>
-            <TouchableOpacity>
-              <Text style={styles.buttonText}>Notifications</Text>
-            </TouchableOpacity>
-          </View> */}
 
           <View style={styles.button}>
             <TouchableOpacity onPress={() =>  alert('version 1.0')}>

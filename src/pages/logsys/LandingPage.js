@@ -4,13 +4,10 @@ import * as WebBrowser from "expo-web-browser";
 
 //Package imports
 import React, { useState, useEffect } from "react";
-import { ResponseType } from "expo-auth-session";
-import { useNavigation } from "@react-navigation/core";
 import {
   KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
   Image,

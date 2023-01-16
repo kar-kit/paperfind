@@ -2,8 +2,7 @@
 import * as OpenAnything from 'react-native-openanything'
 
 //Package Imports
-import React, { useEffect, useState, Component } from "react";
-import { ref, getDownloadURL, listAll, getMetadata, list } from "firebase/storage";
+import React, { useState } from "react";
 
 import {
   View,
@@ -18,9 +17,9 @@ import {
 } from "react-native";
 
 //User Imports
-import { db, auth, storage } from '../../config';
+import { db, auth } from '../../config';
 import { collection, query, where, getDocs, getDoc, doc, updateDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {  onAuthStateChanged } from "firebase/auth";
 import fillIcon from '../assets/images/fill-saved-icon.png'
 import nonFillIcon from '../assets/images/saved-icon.png'
 import { useFocusEffect } from '@react-navigation/native';
@@ -34,8 +33,6 @@ function Search({ navigation }) {
   const [showItems, setShowItems] = useState(true);
   const [examBoardChoice, setExamBoardChoice] = useState('edexcel')
   const [firebaseQuery, setFirebaseQuery] = useState(query(collection(db, "papers"), where('examboard', '==', examBoardChoice)));
-  const [userID, setUserID] = useState('');
-  const [favArray, setFavArray] = useState([]);
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -47,18 +44,6 @@ function Search({ navigation }) {
   const [isActive8, setIsActive8] = useState(false);
 
 
-
-  // useEffect(() => {
-  //   async function runFunctionsInOrder() {
-
-  //     await setItemList('');
-    
-  //     await retriveData();
-  //   }
-
-  //   runFunctionsInOrder();
-  // }, [searchTerms, examBoardChoice,firebaseQuery]);
-
   useFocusEffect(
     React.useCallback(() => {
       async function runFunctionsInOrder() {
@@ -69,13 +54,6 @@ function Search({ navigation }) {
     }, [searchTerms, examBoardChoice,firebaseQuery])
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     setItemList('')
-  //     retriveFav()
-  //     retriveData()
-  //   }, [])
-  // );
 
   //Navigation Functions
   const onBackArrowPress = () => {
@@ -148,46 +126,6 @@ function Search({ navigation }) {
     }
   }
 
-  // async function retriveFav() {
-
-  //   onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       const uid = user.uid;
-  //       console.log(user.uid)
-  //       const docRef = doc(db, "users", uid);
-  //       const docSnap = await getDoc(docRef);
-  //       if (docSnap.exists()) {
-  //         setFavArray(docSnap.data().favorites)
-  //         console.log(docSnap.data().favorites)
-  //       }
-  //     } else {
-  //       console.log('error cannot find user id')
-  //     }
-  //   });
-  // }
-
-
-
-
-  // async function retriveFav() {
-  //   let userFav;
-  //   await onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       const uid = user.uid;
-  //       const docRef = doc(db, "users", uid);
-  //       const docSnap = await getDoc(docRef);
-  //       if (docSnap.exists()) {
-  //         setFavArray(docSnap.data().favorites)
-  //         userFav = docSnap.data().favorites
-  //         // console.log(userFav)
-  //       }
-  //     } else {
-  //       console.log('error cannot find user id')
-  //     }
-  //   });
-  //   console.log(userFav)
-  //   return userFav;
-  // }
   async function retriveFav() {
     let userFav;
     await new Promise((resolve) => {
@@ -197,7 +135,6 @@ function Search({ navigation }) {
           const docRef = doc(db, "users", uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            setFavArray(docSnap.data().favorites)
             userFav = docSnap.data().favorites
             resolve(userFav); 
           }
@@ -281,29 +218,6 @@ function Search({ navigation }) {
     <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} favorite={item.favorite} />
   );
 
-
-  // async function favoriteItem(idCred) {
-  //   const itemRef = doc(db, 'papers', idCred)
-  //   const docSnap = await getDoc(itemRef)
-
-  //   if (docSnap.exists()) {
-  //     if (docSnap.data().favorite === true) {
-  //       await updateDoc(itemRef, {
-  //         favorite: false
-  //       });
-  //     }
-  //     else if (docSnap.data().favorite === false) {
-  //       await updateDoc(itemRef, {
-  //         favorite: true
-  //       });
-  //     }
-  //   } else {
-  //     // doc.data() will be undefined in this case
-  //     console.log("No such document!");
-  //   }
-
-  // }
-
   async function favoriteItem(idCred) {
 
     onAuthStateChanged(auth, async (user) => {
@@ -334,7 +248,7 @@ function Search({ navigation }) {
           const docData = {
             favorites: [idCred]
           }
-          await setDoc(doc(db, "users", userID), docData);
+          await setDoc(doc(db, "users", uid), docData);
 
           retriveData()
         }
