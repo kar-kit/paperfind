@@ -1,82 +1,39 @@
 //Package Imports
-import React, { useState, useEffect } from "react";
 import { signOut } from "firebase/auth";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
-  TextInput,
-  FlatList,
   Image,
+  Button,
 } from "react-native";
 
-//User imports
-import { auth } from '../../config';
+
+
+
+import React, { useEffect, useState } from "react";
+
 
 //Page Function
-const Profile = ({ navigation }) => {
-  //Retrive user email and store in variable
-  const user = auth.currentUser;
-  const email = user.email;
+const Test = () => {
 
-  //Navigation Functions
-  const onBackArrowPress = () => {
-    navigation.navigate("Dashboard");
-  };
+  const [num, setNum] = useState(0)
 
-  //Logout Functions
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        navigation.navigate("Landing");
-      })
-      .catch((error) => {
-        // An error happened.
-        alert(error.message);
-      });
-  };
+  useEffect(() => {
+    console.log('Number has been changed')
+  }, [num]);
+
+  function addOne() {
+    newNum = num + 1
+    setNum(newNum)
+  }
+
 
   return (
     <View style={styles.pageBorder}>
-      <TouchableOpacity onPress={onBackArrowPress}>
-        <Image
-          source={require("../assets/images/back-arrrow.png")}
-          style={styles.imageArrow}
-        />
-      </TouchableOpacity>
-
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Profile Tab</Text>
-
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <TouchableOpacity onPress={() => alert(email)}>
-              <Text style={styles.buttonText}>View Profile</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* <View style={styles.button}>
-            <TouchableOpacity>
-              <Text style={styles.buttonText}>Notifications</Text>
-            </TouchableOpacity>
-          </View> */}
-
-          <View style={styles.button}>
-            <TouchableOpacity onPress={() => alert('version 1.0')}>
-              <Text style={styles.buttonText}>About</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.button}>
-            <TouchableOpacity onPress={handleLogout}>
-              <Text style={styles.buttonTextLogout}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <Text>The button has been pressed {num} times</Text>
+      <Button onPress={addOne} />
     </View>
   );
 };
