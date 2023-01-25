@@ -21,9 +21,6 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 
-
-
-
 WebBrowser.maybeCompleteAuthSession();
 
 //Page Function
@@ -59,9 +56,6 @@ const LandingPage = ({ navigation }) => {
   const onFooterLinkPress = () => {
     navigation.navigate("Login");
   };
-
-
-
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding ">
