@@ -45,6 +45,7 @@ function ChemSaved({ navigation }) {
       if (user) {
         const uid = user.uid;
         setUserID(uid)
+        console.log('User info retrieved 🪪')
       } else {
         console.log('error cannot find user id')
       }
@@ -78,7 +79,7 @@ function ChemSaved({ navigation }) {
       console.log('Papers loaded 📰')
     } else {
       // doc.data() will be undefined in this case
-      console.log("No favorited Biology Papers ❌");
+      console.log("No favorited Chemistry Papers ❌");
       alert('No documents have been saved, Please go to the search section to find papers')
     }
   }

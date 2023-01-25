@@ -54,6 +54,7 @@ function Dashboard({ navigation }) {
       // The user object has basic properties such as display name, email, etc.
       const displayName = user.displayName;
       setDisplayName(displayName)
+      console.log('User info retrieved 🪪')
     }
   }
 
@@ -68,22 +69,9 @@ function Dashboard({ navigation }) {
     } else {
       setWelcomeMessage('Good Evening')
     }
+
+    console.log('Greeting message created ⌚')
   }
-
-  const paperRef = ref(storage, 'gs://paperfind-e0cf6.appspot.com/chemistry/paper.pdf');
-
-  const getPaper = () => {
-    getDownloadURL(paperRef)
-      .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-        // console.log(url)
-        OpenAnything.Pdf(url)
-      })
-      .catch((error) => {
-        // Handle any errors
-      });
-  }
-
 
   return (
     <View style={styles.containerPage}>

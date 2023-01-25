@@ -29,6 +29,7 @@ const Profile = ({ navigation }) => {
       .then(() => {
         // Sign-out successful.
         navigation.navigate("Landing");
+        console.log('User Logged out Successfully 🚪')
       })
       .catch((error) => {
         // An error happened.

@@ -46,6 +46,7 @@ function FilterSaved({ navigation }) {
       if (user) {
         const uid = user.uid;
         setUserID(uid)
+        console.log('User info retrieved 🪪')
       } else {
         console.log('error cannot find user id')
       }
