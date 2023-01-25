@@ -37,6 +37,7 @@ const RegisterPage = ({ navigation }) => {
     if (password !== confirmPassword) {
       //Same password check
       alert("Passwords don't match.");
+      console.log("Passwords don't match ❌");
       return;
     }
     //Writing user data to firebase
@@ -45,6 +46,7 @@ const RegisterPage = ({ navigation }) => {
         //After new user created navigate to the dashboard
         const user = userCredential.user;
         navigation.navigate("Dashboard");
+        console.log('New user created using email 🛠️')
       })
       .catch((error) => {
         //Show any errors in the terminal

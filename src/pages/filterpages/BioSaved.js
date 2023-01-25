@@ -76,9 +76,8 @@ function BioSaved({ navigation }) {
             }]);
           }
         }
-        var count = count + 1
       })
-      console.log(count, ' Papers loaded 📰')
+      console.log('Papers loaded 📰')
     } else {
       // doc.data() will be undefined in this case
       console.log("No favorited Biology Papers ❌");

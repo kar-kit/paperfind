@@ -26,7 +26,7 @@ const LoginPage = ({ navigation }) => {
     navigation.navigate("Landing");
   };
 
-  //Logout function
+  //Login function
   const onLoginPress = () => {
     //Check user data with firebase
     signInWithEmailAndPassword(auth, email, password)
@@ -34,6 +34,7 @@ const LoginPage = ({ navigation }) => {
         //if data is valid navigate to next page
         setIsSignedIn(true);
         navigation.navigate("Dashboard");
+        console.log('User logged in with email 🙂')
       })
       .catch((error) => {
         //Show errors in the terminal

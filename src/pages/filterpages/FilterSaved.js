@@ -54,16 +54,14 @@ function FilterSaved({ navigation }) {
 
 
   async function retriveData() {
-    var count = 0
     const docRef = doc(db, "users", userID);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const userData = docSnap.data().favorites
-      userData.forEach(async (paperID) => {
+      userData.forEach(async (paperID,) => {
         const paperRef = doc(db, 'papers', paperID)
         const paperSnap = await getDoc(paperRef)
-
         if (paperSnap.exists()) {
           const paper = paperSnap.data()
           setItemList(arr => [...arr, {
@@ -74,9 +72,8 @@ function FilterSaved({ navigation }) {
             'id': paperSnap.id
           }]);
         }
-        var count = count + 1
       })
-      console.log(count, ' Papers loaded 📰')
+      console.log('Papers loaded 📰')
     } else {
       // doc.data() will be undefined in this case
       console.log("No favorited Biology Papers ❌");

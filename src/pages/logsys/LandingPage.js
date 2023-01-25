@@ -24,7 +24,6 @@ WebBrowser.maybeCompleteAuthSession();
 const LandingPage = ({ navigation }) => {
   //UseState Varibles for subfunctions and return data
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [accessToken, setAccessToken] = useState();
 
   //Google Api Connection
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -42,6 +41,7 @@ const LandingPage = ({ navigation }) => {
         .then((userCredential) => {
           setIsSignedIn(true);
           navigation.navigate("Dashboard");
+          console.log('User signed in using Google 🫠')
         })
         .catch((error) => {
           alert(error);
