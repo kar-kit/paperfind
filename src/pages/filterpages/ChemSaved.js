@@ -13,7 +13,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { getDoc, doc, updateDoc, arrayRemove } from "firebase/firestore";
-import {  onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { useFocusEffect } from '@react-navigation/native';
 import { db, auth } from '../../../config';
 
@@ -26,13 +26,17 @@ function ChemSaved({ navigation }) {
 
   useEffect(() => {
     setItemList('')
+    console.log('Items reset 🚮')
     getUserID()
+    console.log('User ID retrieved 💳')
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
       setItemList('')
+      console.log('Items reset 🚮')
       retriveData()
+      console.log('Papers retrieved successfully ✅')
     }, [userID])
   );
 
@@ -48,8 +52,8 @@ function ChemSaved({ navigation }) {
   }
 
   async function retriveData() {
+    var count = 0
     const docRef = doc(db, "users", userID);
-    // const docRef = doc(db, "users", 're3gVuQyj1PJeGmzkNzvKzSjCTs1');
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -69,12 +73,14 @@ function ChemSaved({ navigation }) {
               'id': doc.id
             }]);
           }
-          console.log('ran successfully')
         }
+        var count = count + 1
       })
+      console.log(count, ' Papers loaded 📰')
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
+      console.log("No favorited Biology Papers ❌");
+      alert('No documents have been saved, Please go to the search section to find papers')
     }
   }
 
@@ -86,9 +92,9 @@ function ChemSaved({ navigation }) {
         const uid = user.uid;
         const itemRef = doc(db, 'users', uid)
         const docSnap = await getDoc(itemRef)
-    
+
         if (docSnap.exists()) {
-          console.log(idCred)
+          console.log(idCred, 'Removed Successfully 💀')
           await updateDoc(itemRef, {
             favorites: arrayRemove(idCred)
           })
@@ -233,6 +239,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 10,
   },
-  
+
 
 });
