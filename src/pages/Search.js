@@ -47,35 +47,36 @@ function Search({ navigation }) {
   const [isActive8, setIsActive8] = useState(false);
 
 
-
-  // useEffect(() => {
-  //   async function runFunctionsInOrder() {
-
-  //     await setItemList('');
-    
-  //     await retriveData();
-  //   }
-
-  //   runFunctionsInOrder();
-  // }, [searchTerms, examBoardChoice,firebaseQuery]);
+  useEffect(() => {
+    getUserID()
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      async function runFunctionsInOrder() {
-        await setItemList('');
-        await retriveData();
-      }
-      runFunctionsInOrder();
-    }, [searchTerms, examBoardChoice,firebaseQuery])
+      setItemList('')
+      retriveData()
+    }, [searchTerms, examBoardChoice])
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     setItemList('')
-  //     retriveFav()
-  //     retriveData()
-  //   }, [])
-  // );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setItemList('')
+      retriveFav()
+      retriveData()
+    }, [searchTerms, favArray, examBoardChoice])
+  );
+
+  const getUserID = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUserID(uid)
+      } else {
+        console.log('error cannot find user id')
+      }
+    });
+  }
 
   //Navigation Functions
   const onBackArrowPress = () => {
@@ -148,77 +149,27 @@ function Search({ navigation }) {
     }
   }
 
-  // async function retriveFav() {
-
-  //   onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       const uid = user.uid;
-  //       console.log(user.uid)
-  //       const docRef = doc(db, "users", uid);
-  //       const docSnap = await getDoc(docRef);
-  //       if (docSnap.exists()) {
-  //         setFavArray(docSnap.data().favorites)
-  //         console.log(docSnap.data().favorites)
-  //       }
-  //     } else {
-  //       console.log('error cannot find user id')
-  //     }
-  //   });
-  // }
-
-
-
-
-  // async function retriveFav() {
-  //   let userFav;
-  //   await onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       const uid = user.uid;
-  //       const docRef = doc(db, "users", uid);
-  //       const docSnap = await getDoc(docRef);
-  //       if (docSnap.exists()) {
-  //         setFavArray(docSnap.data().favorites)
-  //         userFav = docSnap.data().favorites
-  //         // console.log(userFav)
-  //       }
-  //     } else {
-  //       console.log('error cannot find user id')
-  //     }
-  //   });
-  //   console.log(userFav)
-  //   return userFav;
-  // }
   async function retriveFav() {
-    let userFav;
-    await new Promise((resolve) => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const uid = user.uid;
-          const docRef = doc(db, "users", uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setFavArray(docSnap.data().favorites)
-            userFav = docSnap.data().favorites
-            resolve(userFav); 
-          }
-        } else {
-          console.log('error cannot find user id')
-        }
-      });
-    });
-    return userFav;
+
+    const docRef = doc(db, "users", userID);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data().favorites
+      setFavArray(userData)
+    }
   }
-  
+
+
 
 
   async function retriveData() {
+
+
     setItemList('')
-    const favs = await retriveFav();
-    
-    
     let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
+
     const q = firebaseQuery;
-    
+
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
@@ -226,9 +177,8 @@ function Search({ navigation }) {
       if (paper.name.toLowerCase().replace(/\s/g, "").includes(formattedSearchTerm) === true) {
         if (itemList.includes(doc.id) === false && paper.examboard === examBoardChoice) {
 
-          // console.log(favs);
 
-          if (favs.includes(doc.id)) {
+          if (favArray.includes(doc.id)) {
             setItemList(arr => [...arr, {
               'title': paper.displayname,
               'link': paper.downloadurl,
@@ -237,7 +187,6 @@ function Search({ navigation }) {
               'id': doc.id,
               'favorite': fillIcon
             }]);
-            console.log('favorite item loaded')
           } else {
             setItemList(arr => [...arr, {
               'title': paper.displayname,
@@ -247,9 +196,8 @@ function Search({ navigation }) {
               'id': doc.id,
               'favorite': nonFillIcon
             }]);
-            console.log('non-favorite item loaded')
           }
-          
+
         }
       }
     });
@@ -305,46 +253,30 @@ function Search({ navigation }) {
   // }
 
   async function favoriteItem(idCred) {
+    const itemRef = doc(db, 'users', userID)
+    const docSnap = await getDoc(itemRef)
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const uid = user.uid;
-        console.log(user.uid)
-        const itemRef = doc(db, 'users', uid)
-        const docSnap = await getDoc(itemRef)
-    
-        if (docSnap.exists()) {
-          if (docSnap.data().favorites.includes(idCred) === true) {
-            await updateDoc(itemRef, {
-              favorites: arrayRemove(idCred)
-            });
-
-            retriveData()
-    
-          }
-          else if (docSnap.data().favorites.includes(idCred) === false) {
-            await updateDoc(itemRef, {
-              favorites: arrayUnion(idCred)
-            });
-
-            retriveData()
-          }
-        } else {
-          // doc.data() will be undefined in this case
-          const docData = {
-            favorites: [idCred]
-          }
-          await setDoc(doc(db, "users", userID), docData);
-
-          retriveData()
-        }
-      } else {
-        console.log('error cannot find user id')
+    if (docSnap.exists()) {
+      if (docSnap.data().favorites.includes(idCred) === true) {
+        await updateDoc(itemRef, {
+          favorites: arrayRemove(idCred)
+        });
+        retriveData()
       }
-    });
-
-
-    
+      else if (docSnap.data().favorites.includes(idCred) === false) {
+        await updateDoc(itemRef, {
+          favorites: arrayUnion(idCred)
+        });
+        retriveData()
+      }
+    } else {
+      // doc.data() will be undefined in this case
+      const docData = {
+        favorites: [idCred]
+      }
+      await setDoc(doc(db, "users", userID), docData);
+      retriveData()
+    }
 
   }
 

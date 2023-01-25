@@ -30,6 +30,7 @@ function CustomDrawerContent(props) {
       .then(() => {
         // Sign-out successful.
         navigation.navigate("Landing");
+        console.log('User Logged out Successfully 🚪')
       })
       .catch((error) => {
         // An error happened.
@@ -43,7 +44,7 @@ function CustomDrawerContent(props) {
       </View>
 
       <View style={styles.textimagecontainer}>
-        <Image source={require('../assets/images/pf-logo-text.png')} style={styles.textimage}/>
+        <Image source={require('../assets/images/pf-logo-text.png')} style={styles.textimage} />
       </View>
 
       <DrawerContentScrollView {...props} style={{ marginTop: -25 }}>
