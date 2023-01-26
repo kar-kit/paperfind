@@ -2,14 +2,7 @@
 import * as OpenAnything from "react-native-openanything";
 
 //Package Imports
-import React, { useEffect, useState, Component } from "react";
-import {
-  ref,
-  getDownloadURL,
-  listAll,
-  getMetadata,
-  list,
-} from "firebase/storage";
+import React, { useState } from "react";
 
 import {
   View,
@@ -24,7 +17,7 @@ import {
 } from "react-native";
 
 //User Imports
-import { db, auth, storage } from "../../config";
+import { db, auth } from "../../config";
 import {
   collection,
   query,
@@ -37,7 +30,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import fillIcon from "../assets/images/fill-saved-icon.png";
 import nonFillIcon from "../assets/images/saved-icon.png";
 import { useFocusEffect } from "@react-navigation/native";
@@ -53,8 +46,6 @@ function Search({ navigation }) {
   const [firebaseQuery, setFirebaseQuery] = useState(
     query(collection(db, "papers"), where("examboard", "==", examBoardChoice))
   );
-  const [userID, setUserID] = useState("");
-  const [favArray, setFavArray] = useState([]);
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -65,42 +56,17 @@ function Search({ navigation }) {
   const [isActive7, setIsActive7] = useState(false);
   const [isActive8, setIsActive8] = useState(false);
 
-  useEffect(() => {
-    getUserID();
-  }, []);
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     setItemList("");
-  //     console.log("Items reset 🚮");
-  //     // retriveFav();
-  //     retriveData();
-  //   }, [searchTerms, favArray, examBoardChoice])
-  // );
-
   useFocusEffect(
     React.useCallback(() => {
-      setItemList("");
-      console.log("Items reset 🚮");
-      async function order() {
-        await retriveData(retrieveFav());
+      async function runFunctionsInOrder() {
+        await setItemList("");
+        console.log("Items reset 🚮");
+        await retriveData();
       }
 
-      order()
-    }, [searchTerms, examBoardChoice])
+      runFunctionsInOrder();
+    }, [searchTerms, examBoardChoice, firebaseQuery])
   );
-
-  const getUserID = () => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const uid = user.uid;
-        setUserID(uid);
-        console.log("User info retrieved 🪪");
-      } else {
-        console.log("error cannot find user id");
-      }
-    });
-  };
 
   //Navigation Functions
   const onBackArrowPress = () => {
@@ -177,62 +143,33 @@ function Search({ navigation }) {
     }
   };
 
-  // async function retriveFav(callback) {
-
-  //   const docRef = doc(db, "users", userID);
-  //   const docSnap = await getDoc(docRef);
-  //   if (docSnap.exists()) {
-  //     const userData = docSnap.data().favorites
-  //     setFavArray(userData)
-  //     console.log('Favorites papers retrieved 📌')
-  //     callback()
-  //   }
-  // }
-
-  // async function retriveFav(callback) {
-  //   let userFav;
-  //   await new Promise(async (resolve) => {
-  //       const docRef = doc(db, "users", userID);
-  //       const docSnap = await getDoc(docRef);
-  //       if (docSnap.exists()) {
-  //         setFavArray(docSnap.data().favorites);
-  //         userFav = docSnap.data().favorites;
-  //         resolve(userFav);
-  //         console.log('oo')
-  //       }
-  //     });
-  //   return userFav;
-  // }
-  async function retrieveFav() {
+  async function retriveFav() {
     let userFav;
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const uid = user.uid;
-        const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          await setFavArray(docSnap.data().favorites);
-          var userFav = docSnap.data().favorites;
-          return userFav;
+    await new Promise((resolve) => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const uid = user.uid;
+          const docRef = doc(db, "users", uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            userFav = docSnap.data().favorites;
+            console.log("Favorites papers retrieved 📌");
+            resolve(userFav);
+          }
+        } else {
+          console.log("error cannot find user id");
         }
-      } else {
-        console.log('error cannot find user id');
-      }
+      });
     });
+    return userFav;
   }
 
-  async function testfun() {
-    const vont = 1
-    return vont
-  }
-
-  async function retriveData(fav) {
+  async function retriveData() {
     setItemList("");
-    console.log(fav)
     console.log("Items reset 🚮");
-    let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
+    const favs = await retriveFav();
 
+    let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
     const q = firebaseQuery;
 
     const querySnapshot = await getDocs(q);
@@ -249,7 +186,7 @@ function Search({ navigation }) {
           itemList.includes(doc.id) === false &&
           paper.examboard === examBoardChoice
         ) {
-          if (favArray.includes(doc.id)) {
+          if (favs.includes(doc.id)) {
             setItemList((arr) => [
               ...arr,
               {
@@ -312,32 +249,39 @@ function Search({ navigation }) {
   );
 
   async function favoriteItem(idCred) {
-    const itemRef = doc(db, "users", userID);
-    const docSnap = await getDoc(itemRef);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const itemRef = doc(db, "users", uid);
+        const docSnap = await getDoc(itemRef);
 
-    if (docSnap.exists()) {
-      if (docSnap.data().favorites.includes(idCred) === true) {
-        await updateDoc(itemRef, {
-          favorites: arrayRemove(idCred),
-        });
-        console.log("Removed Successfully 💀");
-        retriveData();
-      } else if (docSnap.data().favorites.includes(idCred) === false) {
-        await updateDoc(itemRef, {
-          favorites: arrayUnion(idCred),
-        });
-        retriveData();
-        console.log("Added Successfully 😊");
+        if (docSnap.exists()) {
+          if (docSnap.data().favorites.includes(idCred) === true) {
+            await updateDoc(itemRef, {
+              favorites: arrayRemove(idCred),
+            });
+            console.log("Removed Successfully 💀");
+            retriveData();
+          } else if (docSnap.data().favorites.includes(idCred) === false) {
+            await updateDoc(itemRef, {
+              favorites: arrayUnion(idCred),
+            });
+            retriveData();
+            console.log("Added Successfully 😊");
+          }
+        } else {
+          // doc.data() will be undefined in this case
+          const docData = {
+            favorites: [idCred],
+          };
+          await setDoc(doc(db, "users", uid), docData);
+          console.log("New user favorite added 🫡");
+          retriveData();
+        }
+      } else {
+        console.log("error cannot find user id");
       }
-    } else {
-      // doc.data() will be undefined in this case
-      const docData = {
-        favorites: [idCred],
-      };
-      await setDoc(doc(db, "users", userID), docData);
-      console.log("New user favorite added 🫡");
-      retriveData();
-    }
+    });
   }
 
   return (

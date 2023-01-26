@@ -1,9 +1,5 @@
-//Quick Imports
-import * as OpenAnything from 'react-native-openanything'
-
 //Package Imports
 import React, { useEffect, useState } from "react";
-import { ref, getDownloadURL } from "firebase/storage";
 import {
   View,
   Text,
@@ -14,23 +10,22 @@ import {
 } from "react-native";
 
 //User Imports
-import { storage, auth } from '../../config';
+import { auth } from "../../config";
 
 //Page Function
 function Dashboard({ navigation }) {
-
-  const [displayName, setDisplayName] = useState('')
-  const [welcomeMessage, setWelcomeMessage] = useState('')
+  const [displayName, setDisplayName] = useState("");
+  const [welcomeMessage, setWelcomeMessage] = useState("");
 
   useEffect(() => {
-    getUserInfo()
-    getWelcomeMessage()
+    getUserInfo();
+    getWelcomeMessage();
   }, []);
 
   //Navigation Functions
   const onSearch = () => {
-    navigation.navigate('Search')
-  }
+    navigation.navigate("Search");
+  };
 
   const onFilterSaved = () => {
     navigation.navigate("Saved");
@@ -53,32 +48,33 @@ function Dashboard({ navigation }) {
     if (user !== null) {
       // The user object has basic properties such as display name, email, etc.
       const displayName = user.displayName;
-      setDisplayName(displayName)
-      console.log('User info retrieved 🪪')
+      setDisplayName(displayName);
+      console.log("User info retrieved 🪪");
     }
-  }
+  };
 
   const getWelcomeMessage = () => {
-    var today = new Date()
-    var curHr = today.getHours()
+    var today = new Date();
+    var curHr = today.getHours();
 
     if (curHr < 12) {
-      setWelcomeMessage('Good Morning')
+      setWelcomeMessage("Good Morning");
     } else if (curHr < 18) {
-      setWelcomeMessage('Good Afternoon')
+      setWelcomeMessage("Good Afternoon");
     } else {
-      setWelcomeMessage('Good Evening')
+      setWelcomeMessage("Good Evening");
     }
 
-    console.log('Greeting message created ⌚')
-  }
+    console.log("Greeting message created ⌚");
+  };
 
   return (
     <View style={styles.containerPage}>
       <View style={styles.container}>
-
         <View style={styles.header}>
-          <Text style={styles.headerText}>{welcomeMessage} {displayName}</Text>
+          <Text style={styles.headerText}>
+            {welcomeMessage} {displayName}
+          </Text>
         </View>
 
         <TouchableOpacity style={styles.buttonSearch} onPress={onSearch}>
@@ -124,7 +120,6 @@ function Dashboard({ navigation }) {
             <Text style={styles.filterButtonText}>Physics</Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </View>
   );
@@ -141,10 +136,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
   },
@@ -161,7 +156,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
     flexDirection: "row",
-    justifyContent: 'flex-start'
+    justifyContent: "flex-start",
   },
   searchImage: {
     marginLeft: 10,
@@ -225,13 +220,13 @@ const styles = StyleSheet.create({
   },
   filterContainer1: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
     marginTop: 30,
   },
   filterContainer2: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     // justifyContent: 'flex-start',
     marginTop: -150,
   },
@@ -244,47 +239,46 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 18,
     flexDirection: "row",
-    justifyContent: 'flex-start'
+    justifyContent: "flex-start",
   },
   filterBox1: {
-    backgroundColor: '#FFEB81',
-    alignItems: 'center',
+    backgroundColor: "#FFEB81",
+    alignItems: "center",
     width: "45%",
-    height: '55%',
+    height: "55%",
     padding: 10,
     borderRadius: 10,
     marginTop: 5,
     margin: 5,
   },
   filterBox2: {
-    backgroundColor: '#B3FF8F',
-    alignItems: 'center',
+    backgroundColor: "#B3FF8F",
+    alignItems: "center",
     width: "45%",
-    height: '55%',
+    height: "55%",
     padding: 10,
     borderRadius: 10,
     marginTop: 5,
     margin: 5,
   },
   filterBox3: {
-    backgroundColor: '#FF7171',
-    alignItems: 'center',
+    backgroundColor: "#FF7171",
+    alignItems: "center",
     width: "45%",
-    height: '55%',
+    height: "55%",
     padding: 10,
     borderRadius: 10,
     marginTop: 5,
     margin: 5,
   },
   filterBox4: {
-    backgroundColor: '#75E6FF',
-    alignItems: 'center',
+    backgroundColor: "#75E6FF",
+    alignItems: "center",
     width: "45%",
-    height: '55%',
+    height: "55%",
     padding: 10,
     borderRadius: 10,
     marginTop: 5,
     margin: 5,
   },
-
 });
