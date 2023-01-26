@@ -1,5 +1,5 @@
 //Global Imports
-import * as OpenAnything from 'react-native-openanything'
+import * as OpenAnything from "react-native-openanything";
 
 //Package imports
 import React, { useState, useEffect } from "react";
@@ -12,102 +12,106 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import { getDoc, doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { useFocusEffect } from '@react-navigation/native';
-import { db, auth } from '../../../config';
+import { useFocusEffect } from "@react-navigation/native";
+import { db, auth } from "../../../config";
 
 //Page Function
 function FilterSaved({ navigation }) {
   //UseState Varibles for subfunctions and return data
   const [itemList, setItemList] = useState([]);
-  const [userID, setUserID] = useState('');
+  const [userID, setUserID] = useState("");
 
   useEffect(() => {
-    setItemList('')
-    console.log('Items reset 🚮')
-    getUserID()
-    console.log('User ID retrieved 💳')
+    setItemList("");
+    console.log("Items reset 🚮");
+    getUserID();
+    console.log("User ID retrieved 💳");
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      setItemList('')
-      console.log('Items reset 🚮')
-      retriveData()
-      console.log('Papers retrieved successfully ✅')
+      setItemList("");
+      console.log("Items reset 🚮");
+      retriveData();
+      console.log("Papers retrieved successfully ✅");
     }, [userID])
   );
-
-
 
   const getUserID = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
-        setUserID(uid)
-        console.log('User info retrieved 🪪')
+        setUserID(uid);
+        console.log("User info retrieved 🪪");
       } else {
-        console.log('error cannot find user id')
+        console.log("error cannot find user id");
       }
     });
-  }
-
+  };
 
   async function retriveData() {
     const docRef = doc(db, "users", userID);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const userData = docSnap.data().favorites
-      userData.forEach(async (paperID,) => {
-        const paperRef = doc(db, 'papers', paperID)
-        const paperSnap = await getDoc(paperRef)
+      const userData = docSnap.data().favorites;
+      userData.forEach(async (paperID) => {
+        const paperRef = doc(db, "papers", paperID);
+        const paperSnap = await getDoc(paperRef);
         if (paperSnap.exists()) {
-          const paper = paperSnap.data()
-          setItemList(arr => [...arr, {
-            'title': paper.displayname,
-            'link': paper.downloadurl,
-            'examboard': paper.examboard,
-            'subject': paper.subject,
-            'id': paperSnap.id
-          }]);
+          const paper = paperSnap.data();
+          setItemList((arr) => [
+            ...arr,
+            {
+              title: paper.displayname,
+              link: paper.downloadurl,
+              examboard: paper.examboard,
+              subject: paper.subject,
+              id: paperSnap.id,
+            },
+          ]);
         }
-      })
-      console.log('Papers loaded 📰')
+      });
+      console.log("Papers loaded 📰");
     } else {
       // doc.data() will be undefined in this case
-      console.log("No favorited Biology Papers ❌");
-      alert('No documents have been saved, Please go to the search section to find papers')
+      console.log("No favorited Papers ❌");
+      alert(
+        "No documents have been saved, Please go to the search section to find papers"
+      );
     }
   }
 
-
   async function favoriteItem(idCred) {
-
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
-        const itemRef = doc(db, 'users', uid)
-        const docSnap = await getDoc(itemRef)
+        const itemRef = doc(db, "users", uid);
+        const docSnap = await getDoc(itemRef);
 
         if (docSnap.exists()) {
-          console.log(idCred)
-          await updateDoc(itemRef, {
-            favorites: arrayRemove(idCred)
-          })
-          setItemList('')
-          retriveData()
+          if (docSnap.data().favorites.includes(idCred) === false) {
+            await updateDoc(itemRef, {
+              favorites: arrayUnion(idCred),
+            });
+            retriveData();
+            console.log("Added Successfully 😊");
+          }
         } else {
-          alert('No documents have been saved')
+          // doc.data() will be undefined in this case
+          const docData = {
+            favorites: [idCred],
+          };
+          await setDoc(doc(db, "users", uid), docData);
+          console.log("New user favorite added 🫡");
+          retriveData();
         }
-
       } else {
-        console.log('error cannot find user id')
+        console.log("error cannot find user id");
       }
     });
-
-
   }
 
   //Navigation function
@@ -116,11 +120,20 @@ function FilterSaved({ navigation }) {
   };
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} link={item.link} subject={item.subject} examboard={item.examboard} idCred={item.id} />
+    <Item
+      title={item.title}
+      link={item.link}
+      subject={item.subject}
+      examboard={item.examboard}
+      idCred={item.id}
+    />
   );
 
   const Item = ({ title, link, examboard, subject, idCred }) => (
-    <TouchableOpacity style={styles.buttonItem} onPress={() => OpenAnything.Pdf(link)}>
+    <TouchableOpacity
+      style={styles.buttonItem}
+      onPress={() => OpenAnything.Pdf(link)}
+    >
       <View style={styles.buttonHeader}>
         <Text style={styles.buttonText}>{title}</Text>
 
@@ -130,18 +143,17 @@ function FilterSaved({ navigation }) {
             source={require("../../assets/images/fill-saved-icon.png")}
           />
         </TouchableOpacity>
-
       </View>
       <View>
-        <Text style={styles.buttonText2}>{subject} {examboard}</Text>
+        <Text style={styles.buttonText2}>
+          {subject} {examboard}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
-
   return (
     <View style={styles.containerPage}>
-
       <TouchableOpacity onPress={onBackArrowPress}>
         <Image
           source={require("../../assets/images/back-arrrow.png")}
@@ -150,20 +162,13 @@ function FilterSaved({ navigation }) {
       </TouchableOpacity>
 
       <View style={styles.container}>
-
         <View style={styles.headerBorderContainer}>
           <Text style={styles.headerText}>Saved Papers</Text>
         </View>
 
         <SafeAreaView>
-          <FlatList
-            data={itemList}
-            renderItem={renderItem}
-          />
+          <FlatList data={itemList} renderItem={renderItem} />
         </SafeAreaView>
-
-
-
       </View>
     </View>
   );
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   headerText: {
     fontFamily: "Inter-Black",
@@ -200,29 +205,29 @@ const styles = StyleSheet.create({
   headerBorderContainer: {
     backgroundColor: "white",
     borderRadius: 10,
-    width: '90%',
+    width: "90%",
     borderWidth: 4,
-    borderColor: '#FFEB81',
+    borderColor: "#FFEB81",
   },
   buttonText: {
     color: "black",
     fontWeight: "700",
     fontSize: 18,
     flexDirection: "row",
-    justifyContent: 'flex-start'
+    justifyContent: "flex-start",
   },
   buttonText2: {
     color: "black",
     fontWeight: "300",
     fontSize: 15,
     flexDirection: "row",
-    justifyContent: 'flex-start'
+    justifyContent: "flex-start",
   },
   searchImage: {
     width: 30,
     height: 30,
     marginLeft: 150,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 
   image: {
@@ -237,5 +242,4 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginLeft: 10,
   },
-
 });
