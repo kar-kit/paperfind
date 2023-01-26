@@ -83,8 +83,7 @@ function Search({ navigation }) {
       setItemList("");
       console.log("Items reset 🚮");
       async function order() {
-        await retriveFav();
-        await retriveData();
+        await retriveData(retrieveFav());
       }
 
       order()
@@ -204,31 +203,33 @@ function Search({ navigation }) {
   //     });
   //   return userFav;
   // }
-
-  async function retriveFav() {
+  async function retrieveFav() {
     let userFav;
-    await new Promise((resolve) => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const uid = user.uid;
-          const docRef = doc(db, "users", uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setFavArray(docSnap.data().favorites)
-            var userFav = docSnap.data().favorites
-            resolve(userFav)
-          }
-        } else {
-          console.log('error cannot find user id')
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          await setFavArray(docSnap.data().favorites);
+          var userFav = docSnap.data().favorites;
+          return userFav;
         }
-      });
+      } else {
+        console.log('error cannot find user id');
+      }
     });
-    return userFav;
   }
 
-  async function retriveData(userFav) {
+  async function testfun() {
+    const vont = 1
+    return vont
+  }
+
+  async function retriveData(fav) {
     setItemList("");
-    console.log(userFav)
+    console.log(fav)
     console.log("Items reset 🚮");
     let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
 
