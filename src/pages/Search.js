@@ -155,9 +155,15 @@ function Search({ navigation }) {
             userFav = docSnap.data().favorites;
             console.log("Favorites papers retrieved 📌");
             resolve(userFav);
+          } else {
+            console.log("No Favorites saved yet 👷‍♂️");
+            userFav = [];
+            resolve(userFav);
           }
         } else {
           console.log("error cannot find user id");
+          userFav = [];
+          resolve(userFav);
         }
       });
     });
