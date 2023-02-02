@@ -47,6 +47,7 @@ function Search({ navigation }) {
     query(collection(db, "papers"), where("examboard", "==", examBoardChoice))
   );
 
+  //UseState Variables for Filters
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
   const [isActive3, setIsActive3] = useState(false);
@@ -56,6 +57,7 @@ function Search({ navigation }) {
   const [isActive7, setIsActive7] = useState(false);
   const [isActive8, setIsActive8] = useState(false);
 
+  //code ran when page is navigated to
   useFocusEffect(
     React.useCallback(() => {
       async function runFunctionsInOrder() {
@@ -73,6 +75,7 @@ function Search({ navigation }) {
     navigation.navigate("Dashboard");
   };
 
+  //Swaps hides and shows search results and filters around
   const swapElements1 = () => {
     setShowFilters(true);
     setShowItems(false);
@@ -83,6 +86,7 @@ function Search({ navigation }) {
     setShowItems(true);
   };
 
+  //Frontend and Backend Filter Changes
   const bioFilter = () => {
     if (isActive1 === false) {
       setFirebaseQuery(
@@ -143,55 +147,70 @@ function Search({ navigation }) {
     }
   };
 
+  //Retrive user favorite paper data
   async function retriveFav() {
     let userFav;
+    //Holds function run process until resolved
     await new Promise((resolve) => {
+      //Retrive User ID
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           const uid = user.uid;
           const docRef = doc(db, "users", uid);
           const docSnap = await getDoc(docRef);
+          //Search for document with user save data
           if (docSnap.exists()) {
+            //if there is favorites
             userFav = docSnap.data().favorites;
             console.log("Favorites papers retrieved 📌");
             resolve(userFav);
           } else {
+            //if there isn't favorites
             console.log("No Favorites saved yet 👷‍♂️");
             userFav = [];
             resolve(userFav);
           }
         } else {
+          //if there is no user ID
           console.log("error cannot find user id");
           userFav = [];
           resolve(userFav);
         }
       });
     });
+    //return than allow for running to resume
     return userFav;
   }
 
+  //Retrive search results
   async function retriveData() {
+    //reset and run functions
     setItemList("");
     console.log("Items reset 🚮");
     const favs = await retriveFav();
 
+    //form database query from search terms
     let formattedSearchTerm = searchTerms.toLowerCase().replace(/\s/g, "");
     const q = firebaseQuery;
 
+    //run query
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       const paper = doc.data();
+      //filter down results depending on search terms
       if (
         paper.name
           .toLowerCase()
           .replace(/\s/g, "")
           .includes(formattedSearchTerm) === true
       ) {
+        //filter down results depending on user filters + reduce duplicate
         if (
           itemList.includes(doc.id) === false &&
           paper.examboard === examBoardChoice
         ) {
+          //if item is favored use this object data for array
           if (favs.includes(doc.id)) {
             setItemList((arr) => [
               ...arr,
@@ -205,6 +224,7 @@ function Search({ navigation }) {
               },
             ]);
           } else {
+            //if item isn't favored use this object data for array
             setItemList((arr) => [
               ...arr,
               {
@@ -223,6 +243,7 @@ function Search({ navigation }) {
     console.log("Papers loaded 📰");
   }
 
+  //Blueprint for search result frontend
   const Item = ({ title, link, examboard, subject, idCred, favorite }) => (
     <TouchableOpacity
       style={styles.buttonItem}
@@ -243,6 +264,7 @@ function Search({ navigation }) {
     </TouchableOpacity>
   );
 
+  //search result frontend blueprints inputs
   const renderItem = ({ item }) => (
     <Item
       title={item.title}
@@ -254,21 +276,26 @@ function Search({ navigation }) {
     />
   );
 
+  //favoring item
   async function favoriteItem(idCred) {
+    //getting user data
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
         const itemRef = doc(db, "users", uid);
         const docSnap = await getDoc(itemRef);
 
+        //getting user fav array from user data
         if (docSnap.exists()) {
           if (docSnap.data().favorites.includes(idCred) === true) {
+            //if paper in fav then remove paperid from fav array
             await updateDoc(itemRef, {
               favorites: arrayRemove(idCred),
             });
             console.log("Removed Successfully 💀");
             retriveData();
           } else if (docSnap.data().favorites.includes(idCred) === false) {
+            //if paper not in fav then add paperid to fav array
             await updateDoc(itemRef, {
               favorites: arrayUnion(idCred),
             });
@@ -276,10 +303,11 @@ function Search({ navigation }) {
             console.log("Added Successfully 😊");
           }
         } else {
-          // doc.data() will be undefined in this case
+          //make new fav array with paperid
           const docData = {
             favorites: [idCred],
           };
+          //make new doc with fav array under user collection
           await setDoc(doc(db, "users", uid), docData);
           console.log("New user favorite added 🫡");
           retriveData();
@@ -290,6 +318,7 @@ function Search({ navigation }) {
     });
   }
 
+  //Page Frontend JSX
   return (
     <View style={styles.containerPage}>
       <TouchableOpacity onPress={onBackArrowPress}>

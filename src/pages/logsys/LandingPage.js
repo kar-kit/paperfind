@@ -31,19 +31,23 @@ const LandingPage = ({ navigation }) => {
       "675263949593-075ghuufj3iuu2n3omi8jdaaia4m9c35.apps.googleusercontent.com",
   });
 
-
   useEffect(() => {
+    //if google API sends successful response
     if (response?.type === "success") {
+      //gather token from google response
       const { id_token } = response.params;
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
+      //create user with google cred
       signInWithCredential(auth, credential)
         .then((userCredential) => {
+          //when logged in
           setIsSignedIn(true);
           navigation.navigate("Dashboard");
-          console.log('User signed in using Google 🫠')
+          console.log("User signed in using Google 🫠");
         })
         .catch((error) => {
+          //if error occurs
           alert(error);
         });
     }
@@ -54,6 +58,7 @@ const LandingPage = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
+  //frontend JSX
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding ">
       <View style={styles.imagecontainer}>

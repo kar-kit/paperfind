@@ -1,16 +1,10 @@
 //Package Imports
 import React from "react";
 import { signOut } from "firebase/auth";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 //User imports
-import { auth } from '../../config';
+import { auth } from "../../config";
 
 //Page Function
 const Profile = ({ navigation }) => {
@@ -29,7 +23,7 @@ const Profile = ({ navigation }) => {
       .then(() => {
         // Sign-out successful.
         navigation.navigate("Landing");
-        console.log('User Logged out Successfully 🚪')
+        console.log("User Logged out Successfully 🚪");
       })
       .catch((error) => {
         // An error happened.
@@ -37,6 +31,7 @@ const Profile = ({ navigation }) => {
       });
   };
 
+  //frontend JSX
   return (
     <View style={styles.pageBorder}>
       <TouchableOpacity onPress={onBackArrowPress}>
@@ -57,7 +52,7 @@ const Profile = ({ navigation }) => {
           </View>
 
           <View style={styles.button}>
-            <TouchableOpacity onPress={() => alert('version 1.0')}>
+            <TouchableOpacity onPress={() => alert("version 1.0")}>
               <Text style={styles.buttonText}>About</Text>
             </TouchableOpacity>
           </View>

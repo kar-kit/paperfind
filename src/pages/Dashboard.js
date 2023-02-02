@@ -43,6 +43,7 @@ function Dashboard({ navigation }) {
     navigation.navigate("Physics");
   };
 
+  //retrive user info
   const getUserInfo = () => {
     const user = auth.currentUser;
     if (user !== null) {
@@ -53,6 +54,7 @@ function Dashboard({ navigation }) {
     }
   };
 
+  //creating welcome message
   const getWelcomeMessage = () => {
     var today = new Date();
     var curHr = today.getHours();
@@ -68,6 +70,7 @@ function Dashboard({ navigation }) {
     console.log("Greeting message created ⌚");
   };
 
+  //frontend JSX
   return (
     <View style={styles.containerPage}>
       <View style={styles.container}>

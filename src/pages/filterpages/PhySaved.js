@@ -19,10 +19,11 @@ import { db, auth } from "../../../config";
 
 //Page Function
 function PhysSaved({ navigation }) {
-  //UseState Varibles for subfunctions and return data
+  //UseState Variables for subfunctions and return data
   const [itemList, setItemList] = useState([]);
   const [userID, setUserID] = useState("");
 
+  //Code ran on initial startup
   useEffect(() => {
     setItemList("");
     console.log("Items reset 🚮");
@@ -30,6 +31,7 @@ function PhysSaved({ navigation }) {
     console.log("User ID retrieved 💳");
   }, []);
 
+  //Code ran on page navigation
   useFocusEffect(
     React.useCallback(() => {
       setItemList("");
@@ -39,6 +41,7 @@ function PhysSaved({ navigation }) {
     }, [userID])
   );
 
+  //retrive userID
   const getUserID = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -52,13 +55,15 @@ function PhysSaved({ navigation }) {
   };
 
   async function retriveData() {
+    //create doc ref with user ID to retrive fav papers
     const docRef = doc(db, "users", userID);
-    // const docRef = doc(db, "users", 're3gVuQyj1PJeGmzkNzvKzSjCTs1');
     const docSnap = await getDoc(docRef);
 
+    //run query using doc ref
     if (docSnap.exists()) {
       const userData = docSnap.data().favorites;
       userData.forEach(async (paperID) => {
+        //query each fav paper ID and retrive paper data
         const paperRef = doc(db, "papers", paperID);
         const paperSnap = await getDoc(paperRef);
 
@@ -80,7 +85,7 @@ function PhysSaved({ navigation }) {
       });
       console.log("Papers loaded 📰");
     } else {
-      // doc.data() will be undefined in this case
+      // if no fav paper for category
       console.log("No favorited Physics Papers ❌");
       alert(
         "No documents have been saved, Please go to the search section to find papers"
@@ -89,14 +94,17 @@ function PhysSaved({ navigation }) {
   }
 
   async function favoriteItem(idCred) {
+    //getting user data
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
         const itemRef = doc(db, "users", uid);
         const docSnap = await getDoc(itemRef);
 
+        //getting user fav array from user data
         if (docSnap.exists()) {
           if (docSnap.data().favorites.includes(idCred) === false) {
+            //if paper not in fav then add paperid to fav array
             await updateDoc(itemRef, {
               favorites: arrayUnion(idCred),
             });
@@ -104,10 +112,11 @@ function PhysSaved({ navigation }) {
             console.log("Added Successfully 😊");
           }
         } else {
-          // doc.data() will be undefined in this case
+          //make new fav array with paperid
           const docData = {
             favorites: [idCred],
           };
+          //make new doc with fav array under user collection
           await setDoc(doc(db, "users", uid), docData);
           console.log("New user favorite added 🫡");
           retriveData();
@@ -123,6 +132,7 @@ function PhysSaved({ navigation }) {
     navigation.navigate("Dashboard");
   };
 
+  //Blueprint for search result frontend
   const Item = ({ title, link, examboard, subject, idCred }) => (
     <TouchableOpacity
       style={styles.buttonItem}
@@ -146,6 +156,7 @@ function PhysSaved({ navigation }) {
     </TouchableOpacity>
   );
 
+  //search result frontend blueprints inputs
   const renderItem = ({ item }) => (
     <Item
       title={item.title}

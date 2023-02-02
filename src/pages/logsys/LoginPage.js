@@ -34,7 +34,7 @@ const LoginPage = ({ navigation }) => {
         //if data is valid navigate to next page
         setIsSignedIn(true);
         navigation.navigate("Dashboard");
-        console.log('User logged in with email 🙂')
+        console.log("User logged in with email 🙂");
       })
       .catch((error) => {
         //Show errors in the terminal
@@ -42,8 +42,7 @@ const LoginPage = ({ navigation }) => {
       });
   };
 
-
-
+  //Frontend JSX
   return (
     <View style={styles.containerPage}>
       <TouchableOpacity onPress={onBackArrowPress}>
@@ -68,7 +67,7 @@ const LoginPage = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             style={styles.input}
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
           ></TextInput>
 
           <TextInput
@@ -77,7 +76,7 @@ const LoginPage = ({ navigation }) => {
             onChangeText={(text) => setPassword(text)}
             style={styles.input}
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
             secureTextEntry
           ></TextInput>
         </View>

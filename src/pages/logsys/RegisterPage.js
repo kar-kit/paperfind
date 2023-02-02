@@ -31,7 +31,6 @@ const RegisterPage = ({ navigation }) => {
     navigation.navigate("Landing");
   };
 
-
   //Signup Function
   const onRegisterPress = () => {
     if (password !== confirmPassword) {
@@ -46,7 +45,7 @@ const RegisterPage = ({ navigation }) => {
         //After new user created navigate to the dashboard
         const user = userCredential.user;
         navigation.navigate("Dashboard");
-        console.log('New user created using email 🛠️')
+        console.log("New user created using email 🛠️");
       })
       .catch((error) => {
         //Show any errors in the terminal
@@ -54,6 +53,7 @@ const RegisterPage = ({ navigation }) => {
       });
   };
 
+  //frontend JSX
   return (
     <View style={styles.containerPage}>
       <TouchableOpacity onPress={onBackArrowPress}>
@@ -77,7 +77,7 @@ const RegisterPage = ({ navigation }) => {
             onChangeText={(text) => setFullName(text)}
             style={styles.input}
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
           ></TextInput>
 
           <TextInput
@@ -86,7 +86,7 @@ const RegisterPage = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             style={styles.input}
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
           ></TextInput>
 
           <TextInput
@@ -96,7 +96,7 @@ const RegisterPage = ({ navigation }) => {
             style={styles.input}
             secureTextEntry
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
           ></TextInput>
 
           <TextInput
@@ -106,7 +106,7 @@ const RegisterPage = ({ navigation }) => {
             style={styles.input}
             secureTextEntry
             autoCapitalize="none"
-            placeholderTextColor='grey'
+            placeholderTextColor="grey"
           ></TextInput>
         </View>
 
